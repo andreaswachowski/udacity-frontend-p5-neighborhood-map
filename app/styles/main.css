@@ -1,0 +1,16 @@
+/* See https://developers.google.com/maps/documentation/javascript/tutorial
+ * html and body 100% height declarations are necessary.
+ */
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map-canvas {
+  height: 100%;
+}
