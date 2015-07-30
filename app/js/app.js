@@ -9,20 +9,38 @@ function initialize() {
     var map = new google.maps.Map(document.getElementById('map-canvas'),
                                   mapOptions);
 
+    var geocoder = new google.maps.Geocoder();
+
     google.maps.event.addListener(map, 'click', function(e) {
-        placeMarker(e.latLng, map);
+        placeMarker(geocoder, e.latLng, map);
     });
 }
 
-function placeMarker(position, map) {
+function placeMarker(geocoder, position, map) {
     var marker = new google.maps.Marker({
-        draggable: true, // to allow fine-tuning the position
         position: position,
         map: map
     });
 
-    var infowindow = new google.maps.InfoWindow({
-        content: "hello"
+    var infowindow = new google.maps.InfoWindow();
+
+    // See example at https://developers.google.com/maps/documentation/javascript/geocoding
+    geocoder.geocode({'location': position}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            if (results[1]) {
+                infowindow.setContent(results[1].formatted_address);
+                infowindow.open(map, marker);
+                // Briefly display the result, then close the window to avoid
+                // having too
+                window.setTimeout(function() {
+                    infowindow.close(map, marker);
+                },1500);
+            } else {
+                window.alert('No results found');
+            }
+        } else {
+            window.alert('Geocoder failed due to: ' + status);
+        }
     });
 
     markerList.push({
