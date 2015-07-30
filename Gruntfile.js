@@ -1,3 +1,5 @@
+// This Gruntfile is obviously rudimentary. Its purpose is to manifest the
+// general workflow. Minification, linting etc. can (and should!) be added later.
 module.exports = function(grunt) {
     'use strict';
 
