@@ -56,7 +56,7 @@ button {
   display: block;
   padding-top: 1em;
   padding-bottom: 1em;
-  padding-right: 90px; /* Space depends on button size */
+  padding-right: 96px; /* Space depends on size of buttons to the right */
 }
 
 #marker-list li .destroy,
@@ -103,7 +103,7 @@ button {
 
 @media (max-width: 480px) {
   #marker-list {
-    width: 100%;
+    width: 90%;
     margin: 0 auto;
   }
 }

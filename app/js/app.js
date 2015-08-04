@@ -14,6 +14,7 @@ var ViewModel = function() {
     var self = this;
 
     this.markers = ko.observableArray([]);
+    this.markerId = 0;
 
     this.initialize = function() {
         var mapOptions = {
@@ -31,6 +32,12 @@ var ViewModel = function() {
         });
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    };
+
+    this.destroyMarker = function(marker) {
+        var markerArray = self.markers;
+        var removedMarkerArray = markerArray.splice(markerArray.indexOf(marker),1);
+        removedMarkerArray[0].marker.setMap(null); // remove marker from Google Map
     };
 
     this.placeMarker = function(geocoder, position, map) {
@@ -60,7 +67,7 @@ var ViewModel = function() {
         });
 
         self.markers.push({
-            title: "Marker " + self.markers().length + ": Click to change",
+            title: "Marker " + (self.markerId++) + ": Click to change",
             marker: marker,
             infowindow: infowindow
         });
