@@ -60,7 +60,7 @@ var ViewModel = function() {
         });
 
         self.markers.push({
-            title: "Marker " + self.markers().length,
+            title: "Marker " + self.markers().length + ": Click to change",
             marker: marker,
             infowindow: infowindow
         });

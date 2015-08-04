@@ -10,10 +10,16 @@
   <body>
     <div id="content">
       <input id="pac-input" class="controls" type="text" placeholder="Search and filter markers">
-      <div id="list-view">
+      <div id="marker-list">
         <h1>Places</h1>
         <ul data-bind="foreach: markers">
-          <li data-bind="text: title"></li>
+          <li>
+            <div>
+              <label class="marker" data-bind="text: title"></label>
+              <button class="edit-btn"></button>
+              <button class="destroy"></button>
+            </div>
+          </li>
         </ul>
       </div>
       <div id="map-canvas"></div>

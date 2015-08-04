@@ -9,35 +9,114 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
 }
 
-#list-view {
+/* The marker-list styling is based on the #todo-list styling from the todo app
+ * presented in lesson "Learning a New Codebase" in Udacity's "JavaScript
+ * Design Patterns" course, available at
+ * https://www.udacity.com/course/javascript-design-patterns--ud989-nd
+ *
+ * Search for "edit-btn" in
+ * https://github.com/udacity/ud989-todo-app, more specifically, in
+ * https://github.com/udacity/ud989-todo-app/blob/master/bower_components/todomvc-common/base.css
+ */
+button {
+  padding: 0;
+  border: 0;
+  background: none;
+  vertical-align: baseline;
+}
+
+#marker-list {
   position: relative;
   margin-top: 5em;
   margin-left: 2em;
   padding-left: 1em;
+  padding-right: 1em;
   z-index: 2;
   background: #fff;
   opacity: 0.8;
   border-radius: 1em;
 }
 
+#marker-list ul {
+  padding-left: 0;
+  list-style: outside none none;
+}
+
+#marker-list li {
+  position: relative;
+  font-size: 1em;
+  margin: auto 0;
+}
+
+#marker-list li label {
+  display: block;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-right: 90px; /* Space depends on button size */
+}
+
+#marker-list li .destroy,
+#marker-list li .edit-btn {
+	display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  margin: auto 0;
+  transition: all 0.2s;
+}
+
+#marker-list li .edit-btn {
+  right: 48px;
+}
+
+#marker-list li .destroy {
+  right: 0;
+}
+
+#marker-list li:hover .destroy,
+#marker-list li:hover .edit-btn {
+	display: block;
+}
+
+#marker-list li .destroy:hover,
+#marker-list li .edit-btn:hover {
+	text-shadow: 0 0 1px #000,
+				 0 0 10px rgba(199, 107, 107, 0.8);
+	-webkit-transform: scale(1.3);
+	transform: scale(1.3);
+}
+
+#marker-list li .edit-btn:after {
+	content: '✎';
+}
+
+#marker-list li .destroy:after {
+	content: '✖';
+}
+
 @media (max-width: 480px) {
-  #list-view {
+  #marker-list {
     width: 100%;
     margin: 0 auto;
   }
 }
 
 @media (min-width: 481px) {
-  #list-view {
+  #marker-list {
     float: left;
     width: 20%;
   }
 }
 
 #map-canvas {
-  /* Overlaying the list-view on the map as described here
+  /* Overlaying the marker-list on the map as described here
    * http://codepen.io/anon/pen/sojbd, referred to from
    * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
    */
