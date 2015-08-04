@@ -14,6 +14,15 @@ function initialize() {
     google.maps.event.addListener(map, 'click', function(e) {
         placeMarker(geocoder, e.latLng, map);
     });
+
+    var input = document.getElementById('pac-input');
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    // TODO: Define search bios based on initially visible map
+    var defaultBounds = new google.maps.LatLngBounds(
+    );
+    // var options = {};
+    // var autocomplete = new google.maps.places.Autocomplete(input, options);
 }
 
 function placeMarker(geocoder, position, map) {
@@ -81,7 +90,7 @@ function loadScript() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
-        '&signed_in=true&callback=initialize';
+        '&signed_in=true&callback=initialize&libraries=places';
     document.body.appendChild(script);
 }
 
