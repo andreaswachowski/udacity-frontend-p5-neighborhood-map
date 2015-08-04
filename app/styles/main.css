@@ -11,6 +11,23 @@ body {
   padding: 0;
 }
 
+#list-view {
+}
+
+@media (max-width: 480px) {
+  #list-view {
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 481px) {
+  #list-view {
+    float: left;
+    width: 30%;
+  }
+}
+
 #map-canvas {
   height: 100%;
 }

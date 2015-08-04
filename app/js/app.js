@@ -1,5 +1,11 @@
-var markerList = [
-];
+// TODO: I'd prefer to have this declared in the Viewmodel
+// but then it will not be available in the function placeMarker.
+// And since
+// * window.onLoad depends on loadScript
+// * loadScript depends on initialize
+// * initialize depends on placeMarker
+// I cannot move everything (except window.onLoad) into the ViewModel.
+var markers = ko.observableArray([]);
 
 function initialize() {
     var mapOptions = {
@@ -52,7 +58,8 @@ function placeMarker(geocoder, position, map) {
         }
     });
 
-    markerList.push({
+    markers.push({
+        title: "Marker " + markers().length,
         marker: marker,
         infowindow: infowindow
     });
@@ -93,5 +100,11 @@ function loadScript() {
         '&signed_in=true&callback=initialize&libraries=places';
     document.body.appendChild(script);
 }
+
+var ViewModel = function() {
+
+};
+
+ko.applyBindings(new ViewModel());
 
 window.onload = loadScript;

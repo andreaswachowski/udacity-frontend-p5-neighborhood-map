@@ -9,6 +9,12 @@
 	</head>
   <body>
     <input id="pac-input" class="controls" type="text" placeholder="Search and filter markers">
+    <div id="list-view">
+      <h1>Places</h1>
+      <ul data-bind="foreach: markers">
+        <li data-bind="text: title"></li>
+      </ul>
+    </div>
     <div id="map-canvas"></div>
     <!--<div id="info-entry">
       <p>What information would you like to add for this location? </p>
