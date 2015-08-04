@@ -12,6 +12,14 @@ body {
 }
 
 #list-view {
+  position: relative;
+  margin-top: 5em;
+  margin-left: 2em;
+  padding-left: 1em;
+  z-index: 2;
+  background: #fff;
+  opacity: 0.8;
+  border-radius: 1em;
 }
 
 @media (max-width: 480px) {
@@ -24,11 +32,20 @@ body {
 @media (min-width: 481px) {
   #list-view {
     float: left;
-    width: 30%;
+    width: 20%;
   }
 }
 
 #map-canvas {
+  /* Overlaying the list-view on the map as described here
+   * http://codepen.io/anon/pen/sojbd, referred to from
+   * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
+   */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
   height: 100%;
 }
 
