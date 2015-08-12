@@ -13,13 +13,13 @@
       <div id="marker-list">
         <h1>Places</h1>
         <ul data-bind="foreach: markers">
-          <li>
-            <div>
-              <label class="marker" data-bind="text: title"></label>
-              <button class="edit-btn"></button>
+					<li data-bind="css: { editing: editing }">
+            <div class="view">
+							<label class="marker" data-bind="text: title, event: { dblclick: $parent.editMarker }"></label>
+              <button class="edit-btn" data-bind="click: $parent.editMarker"></button>
               <button class="destroy" data-bind="click: $parent.destroyMarker"></button>
             </div>
-          </li>
+						<input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $parent.saveEditing, escapeKey: $parent.cancelEditing, selectAndFocus: editing, event: { blur: $parent.saveEditing }"> </li>
         </ul>
       </div>
       <div id="map-canvas"></div>

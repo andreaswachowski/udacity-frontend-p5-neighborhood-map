@@ -1,3 +1,64 @@
+// TODO: I would like to wrap the whole code into an IFFY to avoid
+// cluttering the global namespace (and to 'use strict' for everything).
+// But then the callback in loadScript will not work, because initialize()
+// is still assumed to be called on the window object. I don't know yet how
+// I should change the callback to make it work.
+
+// The key handling functionality comes straight from TodoMVC's KnockoutJS
+// example.
+var ENTER_KEY = 13;
+var ESCAPE_KEY = 27;
+
+// A factory function we can use to create binding handlers for specific
+// keycodes.
+function keyhandlerBindingFactory(keyCode) {
+    return {
+        init: function (element, valueAccessor, allBindingsAccessor, data, bindingContext) {
+            var wrappedHandler, newValueAccessor;
+
+            // wrap the handler with a check for the enter key
+            wrappedHandler = function (data, event) {
+                if (event.keyCode === keyCode) {
+                    valueAccessor().call(this, data, event);
+                }
+            };
+
+            // create a valueAccessor with the options that we would want to pass to the event binding
+            newValueAccessor = function () {
+                return {
+                    keyup: wrappedHandler
+                };
+            };
+
+            // call the real event binding's init function
+            ko.bindingHandlers.event.init(element, newValueAccessor, allBindingsAccessor, data, bindingContext);
+        }
+    };
+}
+
+// a custom binding to handle the enter key
+ko.bindingHandlers.enterKey = keyhandlerBindingFactory(ENTER_KEY);
+
+// another custom binding, this time to handle the escape key
+ko.bindingHandlers.escapeKey = keyhandlerBindingFactory(ESCAPE_KEY);
+
+// wrapper to hasFocus that also selects text and applies focus async
+ko.bindingHandlers.selectAndFocus = {
+    init: function (element, valueAccessor, allBindingsAccessor, bindingContext) {
+        ko.bindingHandlers.hasFocus.init(element, valueAccessor, allBindingsAccessor, bindingContext);
+        ko.utils.registerEventHandler(element, 'focus', function () {
+            element.focus();
+        });
+    },
+    update: function (element, valueAccessor) {
+        ko.utils.unwrapObservable(valueAccessor()); // for dependency
+        // ensure that element is visible before trying to focus
+        setTimeout(function () {
+            ko.bindingHandlers.hasFocus.update(element, valueAccessor);
+        }, 0);
+    }
+};
+
 function initialize() {
     ko.applyBindings(new ViewModel());
 }
@@ -38,7 +99,38 @@ var ViewModel = function() {
         var markerArray = self.markers;
         var removedMarkerArray = markerArray.splice(markerArray.indexOf(marker),1);
         removedMarkerArray[0].marker.setMap(null); // remove marker from Google Map
-    };
+    }; // TODO: Why does TodoMVC append ".bind(this);"?
+
+    this.editMarker = function (marker) {
+        marker.editing(true);
+        // TODO: Save *all* marker information, not just the title
+        marker.previousTitle = marker.title();
+    }; // TODO: Why does TodoMVC append ".bind(this);"?
+
+    // stop editing a marker.  Remove it, if its title is now empty
+    this.saveEditing = function (marker) {
+        marker.editing(false);
+
+        var title = marker.title();
+        var trimmedTitle = title.trim();
+
+        // Observable value changes are not triggered if they're consisting of whitespaces only
+        // Therefore we've to compare untrimmed version with a trimmed one to chech whether anything changed
+        // And if yes, we've to set the new value manually
+        if (title !== trimmedTitle) {
+            marker.title(trimmedTitle);
+        }
+
+        if (!trimmedTitle) {
+            this.destroyMarker(marker);
+        }
+    }; // TODO: Why does TodoMVC append ".bind(this);"?
+
+    // cancel editing a marker and revert it to the previous content
+    this.cancelEditing = function (marker) {
+        marker.editing(false);
+        marker.title(marker.previousTitle);
+    }.bind(this);
 
     this.placeMarker = function(geocoder, position, map) {
         var marker = new google.maps.Marker({
@@ -66,8 +158,11 @@ var ViewModel = function() {
             }
         });
 
+        // TODO: Use the literal object as a starting point to create a
+        // proper Marker class (as part of the model)
         self.markers.push({
-            title: "Marker " + (self.markerId++) + ": Click to change",
+            title: ko.observable("M" + (self.markerId++)), // + ": Double-click to change"),
+            editing: ko.observable(false),
             marker: marker,
             infowindow: infowindow
         });

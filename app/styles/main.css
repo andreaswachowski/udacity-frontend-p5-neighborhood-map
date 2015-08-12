@@ -101,6 +101,36 @@ button {
 	content: '✖';
 }
 
+#marker-list li.editing {
+	padding: 0;
+}
+
+#marker-list li .edit {
+	display: none;
+}
+
+#marker-list li.editing .edit {
+	display: block;
+	padding: 13px 17px 12px 17px;
+	margin: 0;
+  width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
+
+  /* The width of the input element should fill the width of the surrounding
+   * div. It will not do so unless we use lots of tweaking, or apply
+   * box-sizing: border-box. See
+   * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
+   */
+  box-sizing: border-box;
+  -moz-box-sizing: border-box; /* ff2 */
+  -ms-box-sizing: border-box; /* ie8 */
+  -webkit-box-sizing: border-box; /* safari3 */
+  -khtml-box-sizing: border-box; /* konqueror */
+}
+
+#marker-list li.editing .view {
+	display: none;
+}
+
 @media (max-width: 480px) {
   #marker-list {
     width: 90%;
