@@ -105,13 +105,20 @@ button {
 	padding: 0;
 }
 
+.edit {
+  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  margin: 0;
+  padding: 0;
+}
+
 #marker-list li .edit {
 	display: none;
 }
 
 #marker-list li.editing .edit {
 	display: block;
-	padding: 13px 17px 12px 17px;
+	padding: 13px 17px 12px 0;
 	margin: 0;
   width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
 
