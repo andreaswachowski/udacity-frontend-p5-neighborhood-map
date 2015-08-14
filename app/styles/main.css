@@ -31,10 +31,14 @@ button {
 
 #marker-list {
   position: relative;
-  margin-top: 5em;
-  margin-left: 2em;
-  padding-left: 1em;
-  padding-right: 1em;
+  top: 5em;
+  /* The left offset depends on the padding and the width of the container. For >480px viewports,
+   * the width of the marker-list is 384px + 1em padding left + 1em padding
+   * right. To left/right justify the marker-list at the 480px breakpoint, we use
+   * (480px - (384px + 2em)) / 2 == 34px (with 1em == 14px)
+   */
+  left: 34px;
+  padding: 1em;
   z-index: 2;
   background: #fff;
   opacity: 0.8;
@@ -56,7 +60,6 @@ button {
   display: block;
   padding-top: 1em;
   padding-bottom: 1em;
-  padding-right: 96px; /* Space depends on size of buttons to the right */
 }
 
 #marker-list li .destroy,
@@ -78,6 +81,10 @@ button {
 
 #marker-list li .destroy {
   right: 0;
+}
+
+#marker-list li:hover label {
+  padding-right: 96px; /* Space depends on size of buttons to the right */
 }
 
 #marker-list li:hover .destroy,
@@ -140,15 +147,17 @@ button {
 
 @media (max-width: 480px) {
   #marker-list {
-    width: 90%;
-    margin: 0 auto;
+    left: 7.0835%; /* ((384px + 2em) / 480px) / 2, with 1em == 14px */
+    padding-left: 2.9166%; /* 14px / 480px */
+    padding-right: 2.9166%; /* 14px / 480px */
+    width: 80%; /* 384px / 480px */
   }
 }
 
 @media (min-width: 481px) {
   #marker-list {
     float: left;
-    width: 20%;
+    width: 384px; /* keep it at 80% of 480px */
   }
 }
 
