@@ -115,11 +115,15 @@ var ViewModel = function() {
         var trimmedTitle = title.trim();
 
         // Observable value changes are not triggered if they're consisting of whitespaces only
-        // Therefore we've to compare untrimmed version with a trimmed one to chech whether anything changed
+        // Therefore we've to compare untrimmed version with a trimmed one to check whether anything changed
         // And if yes, we've to set the new value manually
         if (title !== trimmedTitle) {
             marker.title(trimmedTitle);
         }
+
+        // The infowindow has to be set in all cases since it is not a KO
+        // observable. TODO: Should I make it one? Why? Why not?
+        marker.infowindow.setContent(trimmedTitle);
 
         if (!trimmedTitle) {
             this.destroyMarker(marker);
@@ -133,42 +137,46 @@ var ViewModel = function() {
     }.bind(this);
 
     this.placeMarker = function(geocoder, position, map) {
-        var marker = new google.maps.Marker({
+        var gMarker = new google.maps.Marker({
                 position: position,
                 map: map
             }),
-            infowindow = new google.maps.InfoWindow();
+            infowindow = new google.maps.InfoWindow(),
+            // TODO: Use the literal object as a starting point to create a
+            // proper Marker class (as part of the model)
+            marker = {
+                title: ko.observable(""), // ko.observable(infowindow.getContent()),
+                editing: ko.observable(false),
+                marker: gMarker,
+                infowindow: infowindow
+            };
 
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
         geocoder.geocode({'location': position}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 if (results[1]) {
                     infowindow.setContent(results[1].formatted_address);
-                    infowindow.open(map, marker);
+                    infowindow.open(map, gMarker);
                     // Briefly display the result, then close the window to avoid
                     // having too
                     window.setTimeout(function() {
-                        infowindow.close(map, marker);
+                        infowindow.close(map, gMarker);
                     },1500);
                 } else {
+                    infowindow.setContent('Unknown, double-click to edit.');
                     window.alert('No results found');
                 }
             } else {
+                infowindow.setContent('Unknown, double-click to edit.');
                 window.alert('Geocoder failed due to: ' + status);
             }
+            marker.title(infowindow.getContent());
         });
 
-        // TODO: Use the literal object as a starting point to create a
-        // proper Marker class (as part of the model)
-        self.markers.push({
-            title: ko.observable("M" + (self.markerId++)), // + ": Double-click to change"),
-            editing: ko.observable(false),
-            marker: marker,
-            infowindow: infowindow
-        });
+        self.markers.push(marker);
 
-        google.maps.event.addListener(marker,'click',function() {
-            map.panTo(marker.getPosition());
+        google.maps.event.addListener(gMarker,'click',function() {
+            map.panTo(gMarker.getPosition());
             // Commenting out infowindow.open for now.
             // Rationale: Opening the window on click conflicts with closing it on
             // mouseout.  When clicking on a marker, the infowindow will open
@@ -188,12 +196,12 @@ var ViewModel = function() {
             // infowindow.open(marker.get('map'), marker);
         });
 
-        google.maps.event.addListener(marker,'mouseover',function() {
-            infowindow.open(marker.get('map'), marker);
+        google.maps.event.addListener(gMarker,'mouseover',function() {
+            infowindow.open(gMarker.get('map'), gMarker);
         });
 
-        google.maps.event.addListener(marker,'mouseout',function() {
-            infowindow.close(marker.get('map'), marker);
+        google.maps.event.addListener(gMarker,'mouseout',function() {
+            infowindow.close(gMarker.get('map'), gMarker);
         });
     };
 
