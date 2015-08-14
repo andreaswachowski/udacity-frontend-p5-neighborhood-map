@@ -152,12 +152,34 @@ button {
     padding-right: 2.9166%; /* 14px / 480px */
     width: 80%; /* 384px / 480px */
   }
+
+  #pac-input {
+    /* TODO: Below 300px viewport width, the pac-input right margin
+     * is not justified with the marker-list margin anymore.
+     * It's a few pixels further left.
+     */
+    width: calc(100% - 7.0835% - 113px - 12px); /* 321px/480px */
+  }
 }
 
 @media (min-width: 481px) {
   #marker-list {
     float: left;
-    width: 384px; /* keep it at 80% of 480px */
+    width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
+  }
+
+  #pac-input {
+    /* pac-input shall be right-justified with the marker-list
+     *
+     * marker-list: pos  34 mar  - bor - pad 14 wid 384 pad 14 bor    - 446px from left up to incl right padding
+     * Hence:
+     *   pac-input: pos 113 mar 12 bor 1 pad 13 wid 295 pad 11 bor 1
+     *
+     * Due to box-sizing=border-box in .controls, we have
+     * width = 446px - 113px (position) - 12px (margin) = 321px. Or alternatively,
+     * width = (1 + 13 + 295 + 11 + 1)px
+     */
+    width: 321px;
   }
 }
 
@@ -179,25 +201,25 @@ button {
  */
 
 .controls {
-  margin-top: 16px;
+  /* margin-top and height are adjusted to match the style of the map/satellite
+   * controls. But these hard-coded values everywhere are very uninspiring.
+   * There has to be a better way?! (I don't mean LESS or SCSS, it's the
+   * connection to the Google Map controls.) */
+  margin-top: 10px;
+  height: 34px;
   border: 1px solid transparent;
   border-radius: 2px 0 0 2px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  height: 32px;
   outline: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 #pac-input {
   background-color: #fff;
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 300;
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
-  width: 400px;
 }
 
 #pac-input:focus {
