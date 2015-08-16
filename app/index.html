@@ -9,17 +9,17 @@
 	</head>
   <body>
     <div id="content">
-      <input id="pac-input" class="controls" type="text" placeholder="Search places">
+      <input id="pac-input" class="controls" type="text" placeholder="Search places" data-bind="textInput: query, valueUpdate: 'keyup'">
       <div id="marker-list">
         <h1>Places</h1>
-        <ul data-bind="foreach: markers">
+        <ul data-bind="foreach: search()">
 					<li data-bind="css: { editing: editing }">
             <div class="view">
-							<label class="marker" data-bind="text: title, event: { click: $parent.showMarker, dblclick: $parent.editMarker }"></label>
-              <button class="edit-btn" data-bind="click: $parent.editMarker"></button>
-              <button class="destroy" data-bind="click: $parent.destroyMarker"></button>
+							<label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+              <button class="edit-btn" data-bind="click: $root.editPlace"></button>
+              <button class="destroy" data-bind="click: $root.destroyPlace"></button>
             </div>
-						<input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $parent.saveEditing, escapeKey: $parent.cancelEditing, selectAndFocus: editing, event: { blur: $parent.saveEditing }"> </li>
+						<input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }"> </li>
         </ul>
       </div>
       <div id="map-canvas"></div>

@@ -74,8 +74,15 @@ function loadScript() {
 var ViewModel = function() {
     var self = this;
 
-    this.markers = ko.observableArray([]);
-    this.markerId = 0;
+    self.places = ko.observableArray([]);
+
+    self.query = ko.observable('');
+
+    self.search = ko.computed( function() {
+        return ko.utils.arrayFilter(self.places(), function(place) {
+            return place.title().toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
+        });
+    });
 
     this.initialize = function() {
         var mapOptions = {
@@ -89,7 +96,7 @@ var ViewModel = function() {
             defaultBounds = new google.maps.LatLngBounds();
 
         google.maps.event.addListener(map, 'click', function(e) {
-            // An infowindow might be open when for example a location in
+            // An infowindow might be open when for example a place in
             // the marker list was clicked. Unless we close that window
             // here, it would remain open (unless manually closed later) in
             // addition to the window pertaining to the newly set marker.
@@ -100,45 +107,45 @@ var ViewModel = function() {
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     };
 
-    this.destroyMarker = function(marker) {
-        var markerArray = self.markers;
-        var removedMarkerArray = markerArray.splice(markerArray.indexOf(marker),1);
-        removedMarkerArray[0].marker.setMap(null); // remove marker from Google Map
+    this.destroyPlace = function(place) {
+        var placesArray = self.places;
+        var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
+        removedPlacesArray[0].marker.setMap(null); // remove marker from Google Map
     }; // TODO: Why does TodoMVC append ".bind(this);"?
 
-    this.editMarker = function (marker) {
-        marker.editing(true);
-        // TODO: Save *all* marker information, not just the title
-        marker.previousTitle = marker.title();
+    this.editPlace = function (place) {
+        place.editing(true);
+        // TODO: Save *all* place information, not just the title
+        place.previousTitle = place.title();
     }; // TODO: Why does TodoMVC append ".bind(this);"?
 
-    // stop editing a marker.  Remove it, if its title is now empty
-    this.saveEditing = function (marker) {
-        marker.editing(false);
+    // stop editing a place.  Remove it, if its title is now empty
+    this.saveEditing = function (place) {
+        place.editing(false);
 
-        var title = marker.title();
+        var title = place.title();
         var trimmedTitle = title.trim();
 
         // Observable value changes are not triggered if they're consisting of whitespaces only
         // Therefore we've to compare untrimmed version with a trimmed one to check whether anything changed
         // And if yes, we've to set the new value manually
         if (title !== trimmedTitle) {
-            marker.title(trimmedTitle);
+            place.title(trimmedTitle);
         }
 
         // The infowindow has to be set in all cases since it is not a KO
         // observable. TODO: Should I make it one? Why? Why not?
-        marker.infowindow.setContent(trimmedTitle);
+        place.infowindow.setContent(trimmedTitle);
 
         if (!trimmedTitle) {
-            this.destroyMarker(marker);
+            this.destroyPlace(place);
         }
     }; // TODO: Why does TodoMVC append ".bind(this);"?
 
     // cancel editing a marker and revert it to the previous content
-    this.cancelEditing = function (marker) {
-        marker.editing(false);
-        marker.title(marker.previousTitle);
+    this.cancelEditing = function (place) {
+        place.editing(false);
+        place.title(place.previousTitle);
     }.bind(this);
 
     this.placeMarker = function(geocoder, position, map) {
@@ -149,7 +156,7 @@ var ViewModel = function() {
             infowindow = new google.maps.InfoWindow(),
             // TODO: Use the literal object as a starting point to create a
             // proper Marker class (as part of the model)
-            marker = {
+            place = {
                 title: ko.observable(""), // ko.observable(infowindow.getContent()),
                 editing: ko.observable(false),
                 marker: gMarker,
@@ -175,10 +182,10 @@ var ViewModel = function() {
                 infowindow.setContent('Unknown, double-click to edit.');
                 window.alert('Geocoder failed due to: ' + status);
             }
-            marker.title(infowindow.getContent());
+            place.title(infowindow.getContent());
         });
 
-        self.markers.push(marker);
+        self.places.push(place);
 
         google.maps.event.addListener(gMarker,'click',function() {
             map.panTo(gMarker.getPosition());
@@ -198,7 +205,7 @@ var ViewModel = function() {
             // the map at any one time. Multiple info windows make the map appear
             // cluttered
             //
-            // infowindow.open(marker.get('map'), marker);
+            // infowindow.open(gMarker.get('map'), gMarker);
         });
 
         google.maps.event.addListener(gMarker,'mouseover',function() {
@@ -212,7 +219,7 @@ var ViewModel = function() {
 
     this.closeInfoWindows = function() {
         // Close any open infowindows. Actually, it should at most one be open.
-        self.markers().forEach(function (currentValue, index, array) {
+        self.places().forEach(function (currentValue, index, array) {
             currentValue.infowindow.close();
         });
     };
@@ -220,11 +227,11 @@ var ViewModel = function() {
     /* showMarker is executed when the user single-clicks on an entry in
      * the marker list
      */
-    this.showMarker = function(marker) {
-        var gMarker = marker.marker;
+    this.showPlace = function(place) {
+        var gMarker = place.marker;
         gMarker.getMap().panTo(gMarker.getPosition());
         self.closeInfoWindows();
-        marker.infowindow.open(gMarker.get('map'), gMarker);
+        place.infowindow.open(gMarker.get('map'), gMarker);
     };
 
     this.initialize();
