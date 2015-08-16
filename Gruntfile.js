@@ -30,8 +30,17 @@ module.exports = function(grunt) {
                     ]
                 }]
             }
-        }
+        },
 
+        jsdoc: {
+            dist: {
+                src: [' app/js/app.js' ],
+                jsdoc: './node_modules/.bin/jsdoc',
+                options: {
+                    destination: 'doc'
+                }
+            }
+        }
     });
 
     grunt.registerTask('build', [
