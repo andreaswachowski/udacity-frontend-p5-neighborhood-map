@@ -145,7 +145,7 @@ var ViewModel = function() {
 
         // The infowindow has to be set in all cases since it is not a KO
         // observable. TODO: Should I make it one? Why? Why not?
-        place.infowindow.setContent(trimmedTitle);
+        place.infowindow.setContent(self.infoWindowContent(place));
 
         if (!trimmedTitle) {
             this.destroyPlace(place);
@@ -167,16 +167,18 @@ var ViewModel = function() {
             // TODO: Use the literal object as a starting point to create a
             // proper Marker class (as part of the model)
             place = {
-                title: ko.observable(""), // ko.observable(infowindow.getContent()),
+                title: ko.observable(""),
                 position: {
                     lat: position.lat(),
                     lng: position.lng()
                 },
+                formatted_address: "",
                 editing: ko.observable(false),
                 marker: gMarker,
                 infowindow: infowindow
             };
 
+        // Initialize formatted_address and title
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
         geocoder.geocode({'location': position}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
@@ -192,7 +194,7 @@ var ViewModel = function() {
                 window.alert('Geocoder failed due to: ' + status);
             }
             place.title(place.formatted_address);
-            infowindow.setContent(self.infoWindowContent(self.places().length-1));
+            infowindow.setContent(self.infoWindowContent(place));
         });
 
         self.places.push(place);
@@ -234,9 +236,14 @@ var ViewModel = function() {
         });
     };
 
-    this.infoWindowContent = function(index) {
-        var str = self.places()[index].formatted_address;
-        //var str='<div data-bind="template: { name: \'infowindow-template\', data: places[' + index + '] }"></div>';
+    this.infoWindowContent = function(place) {
+        var str = '<h3>'+place.title() + '</h3>' +
+            '<div>'+place.formatted_address + '</div>';
+        // TODO: It would be much nicer to keep this HTML in index.html.
+        // Can I use knockout templates? (I think I would have to, because
+        // there might be multiple info windows shown. But how do I bind to
+        // the various places?
+        //var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
         return str;
     };
 
