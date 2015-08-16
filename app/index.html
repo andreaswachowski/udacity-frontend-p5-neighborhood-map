@@ -15,7 +15,7 @@
         <ul data-bind="foreach: markers">
 					<li data-bind="css: { editing: editing }">
             <div class="view">
-							<label class="marker" data-bind="text: title, event: { dblclick: $parent.editMarker }"></label>
+							<label class="marker" data-bind="text: title, event: { click: $parent.showMarker, dblclick: $parent.editMarker }"></label>
               <button class="edit-btn" data-bind="click: $parent.editMarker"></button>
               <button class="destroy" data-bind="click: $parent.destroyMarker"></button>
             </div>

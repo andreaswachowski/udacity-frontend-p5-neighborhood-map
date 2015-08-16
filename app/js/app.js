@@ -89,6 +89,11 @@ var ViewModel = function() {
             defaultBounds = new google.maps.LatLngBounds();
 
         google.maps.event.addListener(map, 'click', function(e) {
+            // An infowindow might be open when for example a location in
+            // the marker list was clicked. Unless we close that window
+            // here, it would remain open (unless manually closed later) in
+            // addition to the window pertaining to the newly set marker.
+            self.closeInfoWindows();
             self.placeMarker(geocoder, e.latLng, map);
         });
 
@@ -203,6 +208,23 @@ var ViewModel = function() {
         google.maps.event.addListener(gMarker,'mouseout',function() {
             infowindow.close(gMarker.get('map'), gMarker);
         });
+    };
+
+    this.closeInfoWindows = function() {
+        // Close any open infowindows. Actually, it should at most one be open.
+        self.markers().forEach(function (currentValue, index, array) {
+            currentValue.infowindow.close();
+        });
+    };
+
+    /* showMarker is executed when the user single-clicks on an entry in
+     * the marker list
+     */
+    this.showMarker = function(marker) {
+        var gMarker = marker.marker;
+        gMarker.getMap().panTo(gMarker.getPosition());
+        self.closeInfoWindows();
+        marker.infowindow.open(gMarker.get('map'), gMarker);
     };
 
     this.initialize();
