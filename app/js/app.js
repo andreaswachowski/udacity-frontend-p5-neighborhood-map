@@ -4,6 +4,10 @@
 // is still assumed to be called on the window object. I don't know yet how
 // I should change the callback to make it work.
 
+var model = {
+    places: []
+};
+
 // The key handling functionality comes straight from TodoMVC's KnockoutJS
 // example.
 var ENTER_KEY = 13;
@@ -74,7 +78,7 @@ function loadScript() {
 var ViewModel = function() {
     var self = this;
 
-    self.places = ko.observableArray([]);
+    self.places = ko.observableArray(model.places);
 
     self.query = ko.observable('');
 
@@ -107,7 +111,7 @@ var ViewModel = function() {
             // here, it would remain open (unless manually closed later) in
             // addition to the window pertaining to the newly set marker.
             self.closeInfoWindows();
-            self.placeMarker(geocoder, e.latLng, map);
+            self.addPlace(geocoder, e.latLng, map);
         });
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -154,7 +158,7 @@ var ViewModel = function() {
         place.title(place.previousTitle);
     }.bind(this);
 
-    this.placeMarker = function(geocoder, position, map) {
+    this.addPlace = function(geocoder, position, map) {
         var gMarker = new google.maps.Marker({
                 position: position,
                 map: map
@@ -164,6 +168,10 @@ var ViewModel = function() {
             // proper Marker class (as part of the model)
             place = {
                 title: ko.observable(""), // ko.observable(infowindow.getContent()),
+                position: {
+                    lat: position.lat(),
+                    lng: position.lng()
+                },
                 editing: ko.observable(false),
                 marker: gMarker,
                 infowindow: infowindow
@@ -172,26 +180,29 @@ var ViewModel = function() {
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
         geocoder.geocode({'location': position}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                if (results[1]) {
-                    infowindow.setContent(results[1].formatted_address);
-                    infowindow.open(map, gMarker);
-                    // Briefly display the result, then close the window to avoid
-                    // having too
-                    window.setTimeout(function() {
-                        infowindow.close(map, gMarker);
-                    },1500);
+                if (results[0]) {
+                    // TODO: There is usually a *lot* more that can be
+                    // extracted from the results.
+                    place.formatted_address = results[0].formatted_address;
                 } else {
-                    infowindow.setContent('Unknown, double-click to edit.');
-                    window.alert('No results found');
+                    place.formatted_address = 'unknown, no result found';
                 }
             } else {
-                infowindow.setContent('Unknown, double-click to edit.');
+                place.formatted_address = 'unknown, Geocoder failed due to ' + status;
                 window.alert('Geocoder failed due to: ' + status);
             }
-            place.title(infowindow.getContent());
+            place.title(place.formatted_address);
+            infowindow.setContent(self.infoWindowContent(self.places().length-1));
         });
 
         self.places.push(place);
+
+        // Briefly display the result, then close the window to avoid
+        // having too many open infowindows.
+        infowindow.open(place.marker.get('map'), place.marker);
+        window.setTimeout(function() {
+            infowindow.close();
+        }, 1500);
 
         google.maps.event.addListener(gMarker,'click',function() {
             map.panTo(gMarker.getPosition());
@@ -221,6 +232,12 @@ var ViewModel = function() {
         google.maps.event.addListener(gMarker,'mouseout',function() {
             infowindow.close(gMarker.get('map'), gMarker);
         });
+    };
+
+    this.infoWindowContent = function(index) {
+        var str = self.places()[index].formatted_address;
+        //var str='<div data-bind="template: { name: \'infowindow-template\', data: places[' + index + '] }"></div>';
+        return str;
     };
 
     this.closeInfoWindows = function() {
