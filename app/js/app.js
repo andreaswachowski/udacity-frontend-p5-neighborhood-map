@@ -199,6 +199,11 @@ var ViewModel = function() {
 
         self.places.push(place);
 
+        // Scroll to bottom of list. When the list overflows, this helps
+        // understanding that new places are indeed added.
+        var placeDiv = document.getElementById("marker-list");
+        placeDiv.scrollTop = placeDiv.scrollHeight;
+
         // Briefly display the result, then close the window to avoid
         // having too many open infowindows.
         infowindow.open(place.marker.get('map'), place.marker);
