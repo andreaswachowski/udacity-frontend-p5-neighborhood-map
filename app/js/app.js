@@ -78,9 +78,15 @@ var ViewModel = function() {
 
     self.query = ko.observable('');
 
+    // The general idea stems from JohnMav at https://discussions.udacity.com/t/search-box-filtering/26749
+    // more specifically his example at http://codepen.io/JohnMav/pen/OVEzWM
+    // It just had to be augmented to not just filter the list, but also
+    // show/hide the markers on the map
     self.search = ko.computed( function() {
         return ko.utils.arrayFilter(self.places(), function(place) {
-            return place.title().toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
+            var isMatch = place.title().toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
+            place.marker.setVisible(isMatch);
+            return isMatch;
         });
     });
 
