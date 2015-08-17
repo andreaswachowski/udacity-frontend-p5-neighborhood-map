@@ -1,11 +1,57 @@
-// TODO: I would like to wrap the whole code into an IFFY to avoid
-// cluttering the global namespace (and to 'use strict' for everything).
-// But then the callback in loadScript will not work, because initialize()
-// is still assumed to be called on the window object. I don't know yet how
-// I should change the callback to make it work.
+/**
+ * @file Includes the application.
+ * @author Andreas Wachowski
+ *
+ * @todo I would like to wrap the whole code into an IFFY to avoid
+ * cluttering the global namespace (and to 'use strict' for everything).
+ * But then the callback in loadScript will not work, because initialize()
+ * is still assumed to be called on the window object. I don't know yet how
+ * I should change the callback to make it work.
+ */
 
+/**
+ * @global
+ */
 var model = {
     places: []
+};
+
+/**
+ * @external "google.maps"
+ * @see {@link https://developers.google.com/maps/documentation/javascript/3.exp/reference"|Google Maps API Reference}
+ */
+
+/**
+ * @class Map
+ * @memberof external:"google.maps"
+ */
+
+/**
+ * @class LatLngLiteral
+ * @memberof external:"google.maps"
+ */
+
+/**
+  * Constructs a Place object. This is the core of the model.
+  * (even though it still contains ko.observables, which I don't think
+  * should be in the model?!)
+  * @constructor
+  * @param {Map} map - The map on which a marker for this place shall be added.
+  * @param {LatLngLiteral} position - The position of the place.
+  */
+var Place = function(map,position) {
+    this.title = ko.observable("");
+    this.position = {
+        lat: position.lat(),
+        lng: position.lng()
+    };
+    this.formatted_address = "";
+    this.editing = ko.observable(false);
+    this.marker = new google.maps.Marker({
+        position: position,
+        map: map
+    });
+    this.infowindow = new google.maps.InfoWindow();
 };
 
 // The key handling functionality comes straight from TodoMVC's KnockoutJS
@@ -63,10 +109,16 @@ ko.bindingHandlers.selectAndFocus = {
     }
 };
 
+/**
+ * Initializes the view model.
+ */
 function initialize() {
     ko.applyBindings(new ViewModel());
 }
 
+/**
+ * Loads the google map code and bootstraps the application.
+ */
 function loadScript() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
@@ -75,6 +127,12 @@ function loadScript() {
     document.body.appendChild(script);
 }
 
+/**
+ * @class ViewModel
+ *
+ * An instance of this will call its initialize method which initializes
+ * and renders the map and all other functionality.
+ */
 var ViewModel = function() {
     var self = this;
 
@@ -159,24 +217,10 @@ var ViewModel = function() {
     }.bind(this);
 
     this.addPlace = function(geocoder, position, map) {
-        var gMarker = new google.maps.Marker({
-                position: position,
-                map: map
-            }),
-            infowindow = new google.maps.InfoWindow(),
-            // TODO: Use the literal object as a starting point to create a
+        var // TODO: Use the literal object as a starting point to create a
             // proper Marker class (as part of the model)
-            place = {
-                title: ko.observable(""),
-                position: {
-                    lat: position.lat(),
-                    lng: position.lng()
-                },
-                formatted_address: "",
-                editing: ko.observable(false),
-                marker: gMarker,
-                infowindow: infowindow
-            };
+            place = new Place(map,position),
+            gMarker = place.marker;
 
         // Initialize formatted_address and title
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
@@ -194,7 +238,7 @@ var ViewModel = function() {
                 window.alert('Geocoder failed due to: ' + status);
             }
             place.title(place.formatted_address);
-            infowindow.setContent(self.infoWindowContent(place));
+            place.infowindow.setContent(self.infoWindowContent(place));
         });
 
         self.places.push(place);
@@ -206,9 +250,9 @@ var ViewModel = function() {
 
         // Briefly display the result, then close the window to avoid
         // having too many open infowindows.
-        infowindow.open(place.marker.get('map'), place.marker);
+        place.infowindow.open(gMarker.get('map'), gMarker);
         window.setTimeout(function() {
-            infowindow.close();
+            place.infowindow.close();
         }, 1500);
 
         google.maps.event.addListener(gMarker,'click',function() {
@@ -233,11 +277,11 @@ var ViewModel = function() {
         });
 
         google.maps.event.addListener(gMarker,'mouseover',function() {
-            infowindow.open(gMarker.get('map'), gMarker);
+            place.infowindow.open(gMarker.get('map'), gMarker);
         });
 
         google.maps.event.addListener(gMarker,'mouseout',function() {
-            infowindow.close(gMarker.get('map'), gMarker);
+            place.infowindow.close(gMarker.get('map'), gMarker);
         });
     };
 
