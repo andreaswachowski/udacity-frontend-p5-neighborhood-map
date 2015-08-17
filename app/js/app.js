@@ -13,6 +13,10 @@
  * @global
  */
 var model = {
+    map: {
+        center: { lat: 53.562261, lng: 9.961613 },
+        initialZoomFactor: 15
+    },
     places: []
 };
 
@@ -154,8 +158,8 @@ var ViewModel = function() {
 
     this.initialize = function() {
         var mapOptions = {
-                center: { lat: 53.562261, lng: 9.961613},
-                zoom: 15
+                center: model.map.center,
+                zoom: model.map.initialZoomFactor
             },
             map = new google.maps.Map(document.getElementById('map-canvas'),
                                       mapOptions),
@@ -217,9 +221,7 @@ var ViewModel = function() {
     }.bind(this);
 
     this.addPlace = function(geocoder, position, map) {
-        var // TODO: Use the literal object as a starting point to create a
-            // proper Marker class (as part of the model)
-            place = new Place(map,position),
+        var place = new Place(map,position),
             gMarker = place.marker;
 
         // Initialize formatted_address and title
@@ -243,8 +245,9 @@ var ViewModel = function() {
 
         self.places.push(place);
 
-        // Scroll to bottom of list. When the list overflows, this helps
-        // understanding that new places are indeed added.
+        // Scroll to bottom of list. When the list overflows and a
+        // vertical scrollbar appears, this helps understanding that new
+        // places are indeed added.
         var placeDiv = document.getElementById("marker-list");
         placeDiv.scrollTop = placeDiv.scrollHeight;
 
