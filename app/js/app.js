@@ -9,6 +9,11 @@
  * I should change the callback to make it work.
  */
 
+// This application only uses foursquare's userless API calls, therefore
+// a client id and client secret are sufficient.
+var FOURSQUARE_CLIENT_ID; /* Initialize this! */
+var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
+
 /**
  * @global
  */
@@ -22,7 +27,7 @@ var model = {
 
 /**
  * @external "google.maps"
- * @see {@link https://developers.google.com/maps/documentation/javascript/3.exp/reference"|Google Maps API Reference}
+ * @see {@link https://developers.google.com/maps/documentation/javascript/3.exp/reference|Google Maps API Reference}
  */
 
 /**
@@ -41,7 +46,7 @@ var model = {
   * should be in the model?!)
   * @constructor
   * @param {Map} map - The map on which a marker for this place shall be added.
-  * @param {LatLngLiteral} position - The position of the place.
+  * @param {LatLng} position - The position of the place.
   */
 var Place = function(map,position) {
     this.title = ko.observable("");
@@ -55,7 +60,99 @@ var Place = function(map,position) {
         position: position,
         map: map
     });
+    this.venues = ko.observableArray();
     this.infowindow = new google.maps.InfoWindow();
+};
+
+/**
+ * Augments the Place object with foursquare venues.
+ * @param {Array} venues - An array of foursquare compact venues, as returned by the FourSquare venue search API
+ * @see {@link https://developer.foursquare.com/docs/responses/venue}
+ */
+// TODO: The viewmodel should not be passed as a parameter here. This
+// dependency doesn't make sense.
+Place.prototype.addVenues = function(venues,viewModel) {
+    // Extract just the information we need from the foursquare object
+    // and assign it to the Place's venues property (which is a
+    // ko.observableArray).
+    this.venues(venues.map(function (e) {
+        return {
+            id: e.id,
+            name: e.name,
+            categories: e.categories.map(function (c) {
+                return { name: c.name };
+            })
+        };
+    }));
+    this.infowindow.setContent(viewModel.infoWindowContent(this));
+};
+
+/**
+ * Constructs a FourSquare api object. This object is currently
+ * only intended for userless access.
+ * @constructor
+ * @param {String} clientId - The foursquare API client id
+ * @param {String} clientSecret - The foursquare API client secret
+ */
+var FourSquare = function(clientId, clientSecret) {
+    this.baseUrl = "https://api.foursquare.com/v2";
+    this.apiVersion = "20150824";
+
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+};
+
+FourSquare.prototype.validApiCredentials = function() {
+    var validCredentials = this.clientId && this.clientSecret;
+    if (!validCredentials) {
+        console.warn("No valid foursquare API credentials provided. FourSquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
+    }
+    return validCredentials;
+};
+
+/**
+ * Given a location, search foursquare for the most likely venues at that
+ * location.
+ * @param {LatLngLiteral} position - The position of the venue.
+ * @param {Number} limit - The maximum number of venues returned
+ * @param {function} callback - A function with two parameters, result and status, that handles the response
+ * @see {@link https://developer.foursquare.com/docs/venues/search}
+ */
+FourSquare.prototype.searchVenueAtPosition = function(position, limit, callback) {
+    // Note: With more FourSquare methods, we would not want to remember to
+    // add this check in every method. Instead we might then use a State pattern.
+    if (!this.validApiCredentials()){
+        return;
+    }
+
+    // Making an AJAX call in plain vanilla Javascript.
+    // Adapted from http://stackoverflow.com/questions/8567114/how-to-make-an-ajax-call-without-jquery
+    var xmlhttp = new XMLHttpRequest();
+    var venues;
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+            if(xmlhttp.status == 200) {
+                // TODO From a security viewpoint, I suppose that using
+                // eval() boils down to trusting the FourSquare servers
+                // The API returns an array called "venues"
+                venues = eval("("+xmlhttp.responseText+")").response.venues;
+            }
+            callback(venues,xmlhttp.status);
+        }
+    };
+
+    var url = this.baseUrl + "/venues/search?ll=" + position.lat + "," + position.lng +
+        "&limit=" + limit +
+        this.apiCallPostFix();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+};
+
+FourSquare.prototype.apiCallPostFix = function() {
+    return "&client_id=" + this.clientId +
+        "&client_secret=" + this.clientSecret +
+        "&v=" + this.apiVersion;
 };
 
 // The key handling functionality comes straight from TodoMVC's KnockoutJS
@@ -222,7 +319,8 @@ var ViewModel = function() {
 
     this.addPlace = function(geocoder, position, map) {
         var place = new Place(map,position),
-            gMarker = place.marker;
+            gMarker = place.marker,
+            positionLiteral = { lat: position.lat(), lng: position.lng() };
 
         // Initialize formatted_address and title
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
@@ -241,6 +339,19 @@ var ViewModel = function() {
             }
             place.title(place.formatted_address);
             place.infowindow.setContent(self.infoWindowContent(place));
+        });
+
+        var fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
+
+        fourSquare.searchVenueAtPosition(positionLiteral,
+                                         /* limit results to */ 3,
+                                         function(results, status) {
+            if (status === 200) {
+                console.log(results);
+                place.addVenues(results,self);
+            } else {
+                console.warn("FourSquare call failed with status " + status);
+            }
         });
 
         self.places.push(place);
@@ -289,13 +400,28 @@ var ViewModel = function() {
     };
 
     this.infoWindowContent = function(place) {
-        var str = '<h3>'+place.title() + '</h3>' +
-            '<div>'+place.formatted_address + '</div>';
-        // TODO: It would be much nicer to keep this HTML in index.html.
+        // TODO: It would be much (!) nicer to keep this HTML in index.html.
         // Can I use knockout templates? (I think I would have to, because
         // there might be multiple info windows shown. But how do I bind to
         // the various places?
         //var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
+
+        var str = '<h3>'+place.title() + '</h3>' +
+            '<div>'+place.formatted_address + '</div>' +
+            '<h4>Venues around this location</h4>' +
+            '<ul>';
+        place.venues().forEach(function(v, index, array) {
+            str += '<li>' + v.name;
+            var categoryStr = v.categories.map(function(c) {
+                return c.name;
+            }).join();
+            if (categoryStr !== "") {
+                str += " (" + categoryStr + ")";
+            }
+            str += "</li>";
+        });
+        str += "</ul>";
+
         return str;
     };
 

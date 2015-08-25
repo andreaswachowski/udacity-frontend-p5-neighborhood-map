@@ -14,6 +14,15 @@ You can edit the title of a location by double-clicking on the corresponding
 list entry (or clicking its edit button). A single click pans to the selected
 marker.
 
+# Installation
+Clone the repository and open `index.html`. 
+
+To enable foursquare API access, you need a foursquare client id and client
+secret (see [Connecting to the FourSquare
+API](https://developer.foursquare.com/overview/auth)). Use those to
+initialize `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET` at the top
+of `app/js/app.js`.
+
 # Resources
 * [todomvc](https://github.com/tastejs/todomvc/tree/gh-pages) for the marker list
 * [Google Maps APIs](https://developers.google.com/maps/)
