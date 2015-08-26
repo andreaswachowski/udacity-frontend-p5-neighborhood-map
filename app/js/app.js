@@ -280,13 +280,13 @@ var ViewModel = function() {
         var placesArray = self.places;
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
         removedPlacesArray[0].marker.setMap(null); // remove marker from Google Map
-    }; // TODO: Why does TodoMVC append ".bind(this);"?
+    };
 
     this.editPlace = function (place) {
         place.editing(true);
         // TODO: Save *all* place information, not just the title
         place.previousTitle = place.title();
-    }; // TODO: Why does TodoMVC append ".bind(this);"?
+    };
 
     // stop editing a place.  Remove it, if its title is now empty
     this.saveEditing = function (place) {
@@ -309,13 +309,13 @@ var ViewModel = function() {
         if (!trimmedTitle) {
             this.destroyPlace(place);
         }
-    }; // TODO: Why does TodoMVC append ".bind(this);"?
+    }.bind(this); // ensure that "this" is always this view model
 
     // cancel editing a marker and revert it to the previous content
     this.cancelEditing = function (place) {
         place.editing(false);
         place.title(place.previousTitle);
-    }.bind(this);
+    };
 
     this.addPlace = function(geocoder, position, map) {
         var place = new Place(map,position),
@@ -408,7 +408,7 @@ var ViewModel = function() {
 
         var str = '<h3>'+place.title() + '</h3>' +
             '<div>'+place.formatted_address + '</div>' +
-            '<h4>Venues around this location</h4>' +
+            '<h4>In the vicinity</h4>' +
             '<ul>';
         place.venues().forEach(function(v, index, array) {
             str += '<li>' + v.name;
