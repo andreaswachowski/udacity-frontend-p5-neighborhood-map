@@ -15,6 +15,25 @@ var FOURSQUARE_CLIENT_ID; /* Initialize this! */
 var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
 
 /**
+ * Loads the google map code and bootstraps the application.
+ * Called at window.onload, see end of file.
+ */
+function loadScript() {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
+        '&signed_in=true&callback=initialize';
+    document.body.appendChild(script);
+}
+
+/**
+ * Initializes the view model. Called from loadScript().
+ */
+function initialize() {
+    ko.applyBindings(new ViewModel());
+}
+
+/**
  * @global
  */
 var model = {
@@ -22,7 +41,7 @@ var model = {
         center: { lat: 53.562261, lng: 9.961613 },
         initialZoomFactor: 15
     },
-    places: []
+    places: [] // elements are of type Place, see below
 };
 
 /**
@@ -41,6 +60,7 @@ var model = {
  */
 
 /**
+  * @class Place
   * Constructs a Place object. This is the core of the model.
   * (even though it still contains ko.observables, which I don't think
   * should be in the model?!)
@@ -88,6 +108,8 @@ Place.prototype.addVenues = function(venues,viewModel) {
 };
 
 /**
+ * @class FourSquare
+ *
  * Constructs a FourSquare api object. This object is currently
  * only intended for userless access.
  * @constructor
@@ -209,24 +231,6 @@ ko.bindingHandlers.selectAndFocus = {
         }, 0);
     }
 };
-
-/**
- * Initializes the view model.
- */
-function initialize() {
-    ko.applyBindings(new ViewModel());
-}
-
-/**
- * Loads the google map code and bootstraps the application.
- */
-function loadScript() {
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
-        '&signed_in=true&callback=initialize';
-    document.body.appendChild(script);
-}
 
 /**
  * @class ViewModel
