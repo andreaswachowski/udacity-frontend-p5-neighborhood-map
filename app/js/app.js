@@ -81,6 +81,7 @@ var Place = function(map,position) {
         map: map
     });
     this.venues = ko.observableArray();
+    this.fourSquareLookupError = ko.observable();
     this.infowindow = new google.maps.InfoWindow();
 };
 
@@ -89,8 +90,6 @@ var Place = function(map,position) {
  * @param {Array} venues - An array of foursquare compact venues, as returned by the FourSquare venue search API
  * @see {@link https://developer.foursquare.com/docs/responses/venue}
  */
-// TODO: The viewmodel should not be passed as a parameter here. This
-// dependency doesn't make sense.
 Place.prototype.addVenues = function(venues,viewModel) {
     // Extract just the information we need from the foursquare object
     // and assign it to the Place's venues property (which is a
@@ -104,7 +103,6 @@ Place.prototype.addVenues = function(venues,viewModel) {
             })
         };
     }));
-    this.infowindow.setContent(viewModel.infoWindowContent(this));
 };
 
 /**
@@ -352,9 +350,12 @@ var ViewModel = function() {
                                          function(results, status) {
             if (status === 200) {
                 console.log(results);
-                place.addVenues(results,self);
+                place.addVenues(results);
+                place.infowindow.setContent(self.infoWindowContent(place));
             } else {
-                console.warn("FourSquare call failed with status " + status);
+                place.fourSquareLookupError("FourSquare call failed with status " + status);
+                console.warn(place.fourSquareLookupError());
+                place.infowindow.setContent(self.infoWindowContent(place));
             }
         });
 
@@ -411,20 +412,25 @@ var ViewModel = function() {
         //var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
 
         var str = '<h3>'+place.title() + '</h3>' +
-            '<div>'+place.formatted_address + '</div>' +
-            '<h4>In the vicinity</h4>' +
-            '<ul>';
-        place.venues().forEach(function(v, index, array) {
-            str += '<li>' + v.name;
-            var categoryStr = v.categories.map(function(c) {
-                return c.name;
-            }).join();
-            if (categoryStr !== "") {
-                str += " (" + categoryStr + ")";
-            }
-            str += "</li>";
-        });
-        str += "</ul>";
+            '<div>'+place.formatted_address + '</div>';
+
+        if (place.venues().length > 0) {
+            str += '<h4>In the vicinity</h4>';
+            str += '<ul>';
+            place.venues().forEach(function(v, index, array) {
+                str += '<li>' + v.name;
+                var categoryStr = v.categories.map(function(c) {
+                    return c.name;
+                }).join();
+                if (categoryStr !== "") {
+                    str += " (" + categoryStr + ")";
+                }
+                str += "</li>";
+            });
+            str += "</ul>";
+        } else /* silently ignore missing information, but show a warning */ if (place.fourSquareLookupError()) {
+            str += '<p>' + place.fourSquareLookupError() + '</p>';
+        }
 
         return str;
     };
