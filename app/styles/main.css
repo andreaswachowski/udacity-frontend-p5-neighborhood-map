@@ -254,6 +254,19 @@ button {
 }
 
 .hidden {
-  display: hidden;
+  display: none;
 }
 
+/* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
+#connectionLostWarning {
+  position: relative;
+  top: 1em;
+  left: 1em;
+  border-radius: 0.2em;
+  width: 30%;
+  font: bold 1em sans-serif;
+  color: #FFF;
+  background: red;
+  padding: 0.5em;
+  z-index: 3; /* Ensure it is on top of the Map */
+}

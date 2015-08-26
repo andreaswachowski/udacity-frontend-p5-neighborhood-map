@@ -19,11 +19,19 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  * Called at window.onload, see end of file.
  */
 function loadScript() {
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
-        '&signed_in=true&callback=initialize';
-    document.body.appendChild(script);
+    if (navigator.onLine) {
+        document.getElementById('content').classList.remove("hidden");
+        document.getElementById('offlineOnLoad').classList.add("hidden");
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
+            '&signed_in=true&callback=initialize';
+        document.body.appendChild(script);
+    } else {
+        document.getElementById('content').classList.add("hidden");
+        document.getElementById('offlineOnLoad').classList.remove("hidden");
+        setTimeout(loadScript, 3000);
+    }
 }
 
 /**
@@ -371,8 +379,7 @@ var ViewModel = function() {
                     place.formatted_address = 'unknown, no result found';
                 }
             } else {
-                place.formatted_address = 'unknown, Geocoder failed due to ' + status;
-                window.alert('Geocoder failed due to: ' + status);
+                place.formatted_address = 'unknown address (Geocoder failed due to ' + status + ')';
             }
             place.title(place.formatted_address);
             place.setInfowindowContent();
@@ -458,5 +465,23 @@ var ViewModel = function() {
 
     this.initialize();
 };
+
+/* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
+window.addEventListener('load', function() {
+  var status = document.getElementById("status");
+
+  function updateOnlineStatus(event) {
+    var condition = navigator.onLine ? "online" : "offline";
+    var status=document.getElementById('connectionLostWarning');
+      if (navigator.onLine) {
+          status.classList.add("hidden");
+      } else {
+          status.classList.remove("hidden");
+      }
+  }
+
+  window.addEventListener('online',  updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+});
 
 window.onload = loadScript;
