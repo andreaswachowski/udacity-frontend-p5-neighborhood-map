@@ -105,6 +105,35 @@ Place.prototype.addVenues = function(venues,viewModel) {
     }));
 };
 
+// TODO: It would be much (!) nicer to keep this HTML in index.html.
+// Can I use knockout templates? (I think I would have to, because
+// there might be multiple info windows shown. But how do I bind to
+// the various places?
+// var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
+Place.prototype.setInfowindowContent = function() {
+    var str = '<h3>'+this.title() + '</h3>' +
+        '<div>'+this.formatted_address + '</div>';
+
+    if (this.venues().length > 0) {
+        str += '<h4>In the vicinity</h4>';
+        str += '<ul>';
+        this.venues().forEach(function(v, index, array) {
+            str += '<li>' + v.name;
+            var categoryStr = v.categories.map(function(c) {
+                return c.name;
+            }).join();
+            if (categoryStr !== "") {
+                str += " (" + categoryStr + ")";
+            }
+            str += "</li>";
+        });
+        str += "</ul>";
+    } else /* silently ignore missing information, but show a warning */ if (this.fourSquareLookupError()) {
+        str += '<p>' + this.fourSquareLookupError() + '</p>';
+    }
+    this.infowindow.setContent(str);
+};
+
 /**
  * @class FourSquare
  *
@@ -306,7 +335,7 @@ var ViewModel = function() {
 
         // The infowindow has to be set in all cases since it is not a KO
         // observable. TODO: Should I make it one? Why? Why not?
-        place.infowindow.setContent(self.infoWindowContent(place));
+        place.setInfowindowContent();
 
         if (!trimmedTitle) {
             this.destroyPlace(place);
@@ -340,7 +369,7 @@ var ViewModel = function() {
                 window.alert('Geocoder failed due to: ' + status);
             }
             place.title(place.formatted_address);
-            place.infowindow.setContent(self.infoWindowContent(place));
+            place.setInfowindowContent();
         });
 
         var fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
@@ -351,11 +380,11 @@ var ViewModel = function() {
             if (status === 200) {
                 console.log(results);
                 place.addVenues(results);
-                place.infowindow.setContent(self.infoWindowContent(place));
+                place.setInfowindowContent();
             } else {
                 place.fourSquareLookupError("FourSquare call failed with status " + status);
                 console.warn(place.fourSquareLookupError());
-                place.infowindow.setContent(self.infoWindowContent(place));
+                place.setInfowindowContent();
             }
         });
 
@@ -402,37 +431,6 @@ var ViewModel = function() {
         google.maps.event.addListener(gMarker,'mouseout',function() {
             place.infowindow.close(gMarker.get('map'), gMarker);
         });
-    };
-
-    this.infoWindowContent = function(place) {
-        // TODO: It would be much (!) nicer to keep this HTML in index.html.
-        // Can I use knockout templates? (I think I would have to, because
-        // there might be multiple info windows shown. But how do I bind to
-        // the various places?
-        //var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
-
-        var str = '<h3>'+place.title() + '</h3>' +
-            '<div>'+place.formatted_address + '</div>';
-
-        if (place.venues().length > 0) {
-            str += '<h4>In the vicinity</h4>';
-            str += '<ul>';
-            place.venues().forEach(function(v, index, array) {
-                str += '<li>' + v.name;
-                var categoryStr = v.categories.map(function(c) {
-                    return c.name;
-                }).join();
-                if (categoryStr !== "") {
-                    str += " (" + categoryStr + ")";
-                }
-                str += "</li>";
-            });
-            str += "</ul>";
-        } else /* silently ignore missing information, but show a warning */ if (place.fourSquareLookupError()) {
-            str += '<p>' + place.fourSquareLookupError() + '</p>';
-        }
-
-        return str;
     };
 
     this.closeInfoWindows = function() {
