@@ -110,6 +110,12 @@ Place.prototype.addVenues = function(venues,viewModel) {
 // there might be multiple info windows shown. But how do I bind to
 // the various places?
 // var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
+//
+// TODO: In addition, anytime an observable changes, I manually have to
+// call (ie not forget to call!) setInfowindowContent. It is not possible
+// to make the infowindow HTML a ko.computed() and assign it to the
+// content of the infowindow - Google expects a String and would return an
+// error.
 Place.prototype.setInfowindowContent = function() {
     var str = '<h3>'+this.title() + '</h3>' +
         '<div>'+this.formatted_address + '</div>';
