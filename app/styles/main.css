@@ -9,7 +9,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
 }
 
@@ -103,11 +103,11 @@ button {
 }
 
 #marker-list li .edit-btn:after {
-  content: '✎';
+  content: "✎";
 }
 
 #marker-list li .destroy:after {
-  content: '✖';
+  content: "✖";
 }
 
 #marker-list li.editing {
@@ -115,7 +115,7 @@ button {
 }
 
 .edit {
-  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
   margin: 0;
   padding: 0;
