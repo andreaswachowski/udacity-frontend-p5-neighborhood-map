@@ -67,7 +67,7 @@ button {
 
 #marker-list li .destroy,
 #marker-list li .edit-btn {
-	display: none;
+  display: none;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -92,15 +92,14 @@ button {
 
 #marker-list li:hover .destroy,
 #marker-list li:hover .edit-btn {
-	display: block;
+  display: block;
 }
 
 #marker-list li .destroy:hover,
 #marker-list li .edit-btn:hover {
-	text-shadow: 0 0 1px #000,
-				 0 0 10px rgba(199, 107, 107, 0.8);
-	-webkit-transform: scale(1.3);
-	transform: scale(1.3);
+  text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
+  -webkit-transform: scale(1.3);
+  transform: scale(1.3);
 }
 
 #marker-list li .edit-btn:after {
@@ -128,8 +127,8 @@ button {
 
 #marker-list li.editing .edit {
 	display: block;
-	padding: 13px 17px 12px 0;
-	margin: 0;
+  padding: 13px 17px 12px 0;
+  margin: 0;
   width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
 
   /* The width of the input element should fill the width of the surrounding

@@ -68,14 +68,14 @@ var model = {
  */
 
 /**
-  * @class Place
-  * Constructs a Place object. This is the core of the model.
-  * (even though it still contains ko.observables, which I don't think
-  * should be in the model?!)
-  * @constructor
-  * @param {Map} map - The map on which a marker for this place shall be added.
-  * @param {LatLng} position - The position of the place.
-  */
+ * @class Place
+ * Constructs a Place object. This is the core of the model.
+ * (even though it still contains ko.observables, which I don't think
+ * should be in the model?!)
+ * @constructor
+ * @param {Map} map - The map on which a marker for this place shall be added.
+ * @param {LatLng} position - The position of the place.
+ */
 var Place = function(map,position) {
     this.title = ko.observable("");
     this.position = {
@@ -303,8 +303,7 @@ var ViewModel = function() {
                 center: model.map.center,
                 zoom: model.map.initialZoomFactor
             },
-            map = new google.maps.Map(document.getElementById('map-canvas'),
-                                      mapOptions),
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions),
             geocoder = new google.maps.Geocoder(),
             input = document.getElementById('pac-input'),
             defaultBounds = new google.maps.LatLngBounds();
@@ -388,9 +387,9 @@ var ViewModel = function() {
         var fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
 
         fourSquare.searchVenueAtPosition(positionLiteral,
-                                         /* limit results to */ 3,
-                                         function(results, status) {
-            if (status === 200) {
+            /* limit results to */ 3,
+            function(results, status) {
+                if (status === 200) {
                 console.log(results);
                 place.addVenues(results);
                 place.setInfowindowContent();
@@ -468,20 +467,20 @@ var ViewModel = function() {
 
 /* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
 window.addEventListener('load', function() {
-  var status = document.getElementById("status");
+    var status = document.getElementById("status");
 
-  function updateOnlineStatus(event) {
-    var condition = navigator.onLine ? "online" : "offline";
-    var status=document.getElementById('connectionLostWarning');
-      if (navigator.onLine) {
-          status.classList.add("hidden");
-      } else {
-          status.classList.remove("hidden");
-      }
-  }
+    function updateOnlineStatus(event) {
+        var condition = navigator.onLine ? "online" : "offline";
+        var status=document.getElementById('connectionLostWarning');
+        if (navigator.onLine) {
+            status.classList.add("hidden");
+        } else {
+            status.classList.remove("hidden");
+        }
+    }
 
-  window.addEventListener('online',  updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
 });
 
 window.onload = loadScript;
