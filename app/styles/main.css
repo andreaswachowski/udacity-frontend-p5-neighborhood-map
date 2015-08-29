@@ -103,15 +103,15 @@ button {
 }
 
 #marker-list li .edit-btn:after {
-	content: '✎';
+  content: '✎';
 }
 
 #marker-list li .destroy:after {
-	content: '✖';
+  content: '✖';
 }
 
 #marker-list li.editing {
-	padding: 0;
+  padding: 0;
 }
 
 .edit {
@@ -122,11 +122,11 @@ button {
 }
 
 #marker-list li .edit {
-	display: none;
+  display: none;
 }
 
 #marker-list li.editing .edit {
-	display: block;
+  display: block;
   padding: 13px 17px 12px 0;
   margin: 0;
   width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
@@ -144,7 +144,7 @@ button {
 }
 
 #marker-list li.editing .view {
-	display: none;
+  display: none;
 }
 
 @media (max-width: 480px) {
