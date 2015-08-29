@@ -29,7 +29,7 @@ button {
   vertical-align: baseline;
 }
 
-#marker-list {
+.marker-list {
   position: relative;
   top: 5em;
   /* The left offset depends on the padding and the width of the container. For >480px viewports,
@@ -48,25 +48,25 @@ button {
   -webkit-overflow-scrolling: touch;
 }
 
-#marker-list ul {
+.marker-list ul {
   padding-left: 0;
   list-style: outside none none;
 }
 
-#marker-list li {
+.marker-list li {
   position: relative;
   font-size: 1em;
   margin: auto 0;
 }
 
-#marker-list li label {
+.marker-list li label {
   display: block;
   padding-top: 1em;
   padding-bottom: 1em;
 }
 
-#marker-list li .destroy,
-#marker-list li .edit-btn {
+.marker-list li .destroy,
+.marker-list li .edit-btn {
   display: none;
   position: absolute;
   top: 0;
@@ -78,39 +78,42 @@ button {
   transition: all 0.2s;
 }
 
-#marker-list li .edit-btn {
+.marker-list li .edit-btn {
   right: 48px;
 }
 
-#marker-list li .destroy {
+.marker-list li .destroy {
   right: 0;
 }
 
-#marker-list li:hover label {
+.marker-list li:hover label {
   padding-right: 96px; /* Space depends on size of buttons to the right */
 }
 
-#marker-list li:hover .destroy,
-#marker-list li:hover .edit-btn {
+.marker-list li:hover .destroy,
+.marker-list li:hover .edit-btn {
   display: block;
 }
 
-#marker-list li .destroy:hover,
-#marker-list li .edit-btn:hover {
+.marker-list li .destroy:hover,
+.marker-list li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
+  -o-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  -moz-transform: scale(1.3);
   -webkit-transform: scale(1.3);
   transform: scale(1.3);
 }
 
-#marker-list li .edit-btn:after {
+.marker-list li .edit-btn:after {
   content: "✎";
 }
 
-#marker-list li .destroy:after {
+.marker-list li .destroy:after {
   content: "✖";
 }
 
-#marker-list li.editing {
+.marker-list li.editing {
   padding: 0;
 }
 
@@ -121,11 +124,11 @@ button {
   padding: 0;
 }
 
-#marker-list li .edit {
+.marker-list li .edit {
   display: none;
 }
 
-#marker-list li.editing .edit {
+.marker-list li.editing .edit {
   display: block;
   padding: 13px 17px 12px 0;
   margin: 0;
@@ -136,26 +139,26 @@ button {
    * box-sizing: border-box. See
    * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
    */
-  box-sizing: border-box;
   -moz-box-sizing: border-box; /* ff2 */
   -ms-box-sizing: border-box; /* ie8 */
   -webkit-box-sizing: border-box; /* safari3 */
   -khtml-box-sizing: border-box; /* konqueror */
+  box-sizing: border-box;
 }
 
-#marker-list li.editing .view {
+.marker-list li.editing .view {
   display: none;
 }
 
 @media (max-width: 480px) {
-  #marker-list {
+  .marker-list {
     left: 7.0835%; /* ((384px + 2em) / 480px) / 2, with 1em == 14px */
     padding-left: 2.9166%; /* 14px / 480px */
     padding-right: 2.9166%; /* 14px / 480px */
     width: 80%; /* 384px / 480px */
   }
 
-  #pac-input {
+  .pac-input {
     /* TODO: Below 300px viewport width, the pac-input right margin
      * is not justified with the marker-list margin anymore.
      * It's a few pixels further left.
@@ -165,12 +168,12 @@ button {
 }
 
 @media (min-width: 481px) {
-  #marker-list {
+  .marker-list {
     float: left;
     width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
   }
 
-  #pac-input {
+  .pac-input {
     /* pac-input shall be right-justified with the marker-list
      *
      * marker-list: pos  34 mar  - bor - pad 14 wid 384 pad 14 bor    - 446px from left up to incl right padding
@@ -185,7 +188,7 @@ button {
   }
 }
 
-#map-canvas {
+.map-canvas {
   /* Overlaying the marker-list on the map as described here
    * http://codepen.io/anon/pen/sojbd, referred to from
    * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
@@ -211,45 +214,25 @@ button {
   height: 34px;
   border: 1px solid transparent;
   border-radius: 2px 0 0 2px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  outline: none;
+  box-sizing: border-box;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-#pac-input {
+.controls:focus {
+  outline: none;
+}
+
+.pac-input {
   background-color: #fff;
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
 }
 
-#pac-input:focus {
+.pac-input:focus {
   border-color: #4d90fe;
-}
-
-#type-selector {
-  color: #fff;
-  background-color: #4d90fe;
-  padding: 5px 11px 0px 11px;
-}
-
-#type-selector label {
-  font-family: Roboto;
-  font-size: 13px;
-  font-weight: 300;
-}
-
-#info-entry {
-  background: white;
-
-  position: absolute;
-  top: 5em;
-  left: 5em;
-  width: 25%;
-  min-width: 10em;
-  height: 40%;
-  min-height: 5em;
 }
 
 .hidden {
@@ -257,7 +240,7 @@ button {
 }
 
 /* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
-#connectionLostWarning {
+.connection-lost-warning {
   position: relative;
   top: 1em;
   left: 1em;

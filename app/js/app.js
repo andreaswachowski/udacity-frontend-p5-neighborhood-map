@@ -20,16 +20,16 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  */
 function loadScript() {
     if (navigator.onLine) {
-        document.getElementById('content').classList.remove("hidden");
-        document.getElementById('offlineOnLoad').classList.add("hidden");
+        document.getElementsByClassName('content')[0].classList.remove("hidden");
+        document.getElementsByClassName('offline-on-load')[0].classList.add("hidden");
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
             '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
-        document.getElementById('content').classList.add("hidden");
-        document.getElementById('offlineOnLoad').classList.remove("hidden");
+        document.getElementsByClassName('content')[0].classList.add("hidden");
+        document.getElementsByClassName('offline-on-load')[0].classList.remove("hidden");
         setTimeout(loadScript, 3000);
     }
 }
@@ -303,9 +303,9 @@ var ViewModel = function() {
                 center: model.map.center,
                 zoom: model.map.initialZoomFactor
             },
-            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions),
+            map = new google.maps.Map(document.getElementsByClassName('map-canvas')[0], mapOptions),
             geocoder = new google.maps.Geocoder(),
-            input = document.getElementById('pac-input'),
+            input = document.getElementsByClassName('pac-input')[0],
             defaultBounds = new google.maps.LatLngBounds();
 
         google.maps.event.addListener(map, 'click', function(e) {
@@ -405,7 +405,7 @@ var ViewModel = function() {
         // Scroll to bottom of list. When the list overflows and a
         // vertical scrollbar appears, this helps understanding that new
         // places are indeed added.
-        var placeDiv = document.getElementById("marker-list");
+        var placeDiv = document.getElementsByClassName("marker-list")[0];
         placeDiv.scrollTop = placeDiv.scrollHeight;
 
         // Briefly display the result, then close the window to avoid
@@ -467,11 +467,9 @@ var ViewModel = function() {
 
 /* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
 window.addEventListener('load', function() {
-    var status = document.getElementById("status");
-
     function updateOnlineStatus(event) {
         var condition = navigator.onLine ? "online" : "offline";
-        var status=document.getElementById('connectionLostWarning');
+        var status=document.getElementsByClassName('connection-lost-warning')[0];
         if (navigator.onLine) {
             status.classList.add("hidden");
         } else {
