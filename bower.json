@@ -1,0 +1,29 @@
+{
+  "name": "Neighborhood Map",
+  "version": "1.0.0",
+  "authors": [
+    "Andreas Wachowski <andreas.wachowski@gmail.com>"
+  ],
+  "description": "Neighborhood Map - A project for Udacity's Front-End Web Developer Nanodegree",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "~3.3.5",
+    "knockout": "~3.3.0"
+  },
+  "overrides": {
+    "bootstrap-sass": {
+      "main": [
+        "assets/stylesheets/_bootstrap.scss",
+        "assets/fonts/bootstrap/*",
+        "assets/javascripts/bootstrap.js"
+      ]
+    }
+  }
+}
