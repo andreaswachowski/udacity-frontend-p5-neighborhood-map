@@ -101,19 +101,3 @@ $screen-xxs-max: ($screen-xs-min - 1);
 @media (max-width: $screen-xxs-max) {
   @include responsive-invisibility('.hidden-xxs');
 }
-
-// Limit the maximum width to 950px
-.container-fluid {
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 950px;
-}
-
-// more padding, especially for iPad
-// 667px = iPhone 6 in landscape mode
-@media (min-width: 667px) {
-  .container-fluid {
-    padding-left: 35px;
-    padding-right: 35px;
-  }
-}
