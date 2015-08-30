@@ -20,16 +20,16 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  */
 function loadScript() {
     if (navigator.onLine) {
-        document.getElementsByClassName('content')[0].classList.remove("hidden");
-        document.getElementsByClassName('offline-on-load')[0].classList.add("hidden");
+        document.getElementById('content').classList.remove("hidden");
+        document.getElementById('offline-on-load').classList.add("hidden");
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = '//maps.googleapis.com/maps/api/js?v=3.exp' +
+        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
             '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
-        document.getElementsByClassName('content')[0].classList.add("hidden");
-        document.getElementsByClassName('offline-on-load')[0].classList.remove("hidden");
+        document.getElementById('content').classList.add("hidden");
+        document.getElementById('offline-on-load').classList.remove("hidden");
         setTimeout(loadScript, 3000);
     }
 }
@@ -298,14 +298,14 @@ var ViewModel = function() {
         });
     });
 
-    this.initialize = function() {
+    self.initialize = function() {
         var mapOptions = {
                 center: model.map.center,
                 zoom: model.map.initialZoomFactor
             },
-            map = new google.maps.Map(document.getElementsByClassName('map-canvas')[0], mapOptions),
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions),
             geocoder = new google.maps.Geocoder(),
-            input = document.getElementsByClassName('pac-input')[0],
+            input = document.getElementById('pac-input'),
             defaultBounds = new google.maps.LatLngBounds();
 
         google.maps.event.addListener(map, 'click', function(e) {
@@ -320,20 +320,20 @@ var ViewModel = function() {
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     };
 
-    this.destroyPlace = function(place) {
+    self.destroyPlace = function(place) {
         var placesArray = self.places;
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
         removedPlacesArray[0].marker.setMap(null); // remove marker from Google Map
     };
 
-    this.editPlace = function (place) {
+    self.editPlace = function (place) {
         place.editing(true);
         // TODO: Save *all* place information, not just the title
         place.previousTitle = place.title();
     };
 
     // stop editing a place.  Remove it, if its title is now empty
-    this.saveEditing = function (place) {
+    self.saveEditing = function (place) {
         place.editing(false);
 
         var title = place.title();
@@ -356,12 +356,12 @@ var ViewModel = function() {
     }.bind(this); // ensure that "this" is always this view model
 
     // cancel editing a marker and revert it to the previous content
-    this.cancelEditing = function (place) {
+    self.cancelEditing = function (place) {
         place.editing(false);
         place.title(place.previousTitle);
     };
 
-    this.addPlace = function(geocoder, position, map) {
+    self.addPlace = function(geocoder, position, map) {
         var place = new Place(map,position),
             gMarker = place.marker,
             positionLiteral = { lat: position.lat(), lng: position.lng() };
@@ -405,7 +405,7 @@ var ViewModel = function() {
         // Scroll to bottom of list. When the list overflows and a
         // vertical scrollbar appears, this helps understanding that new
         // places are indeed added.
-        var placeDiv = document.getElementsByClassName("marker-list")[0];
+        var placeDiv = document.getElementById("marker-list");
         placeDiv.scrollTop = placeDiv.scrollHeight;
 
         // Briefly display the result, then close the window to avoid
@@ -445,7 +445,7 @@ var ViewModel = function() {
         });
     };
 
-    this.closeInfoWindows = function() {
+    self.closeInfoWindows = function() {
         // Close any open infowindows. Actually, it should at most one be open.
         self.places().forEach(function (currentValue, index, array) {
             currentValue.infowindow.close();
@@ -455,21 +455,21 @@ var ViewModel = function() {
     /* showMarker is executed when the user single-clicks on an entry in
      * the marker list
      */
-    this.showPlace = function(place) {
+    self.showPlace = function(place) {
         var gMarker = place.marker;
         gMarker.getMap().panTo(gMarker.getPosition());
         self.closeInfoWindows();
         place.infowindow.open(gMarker.get('map'), gMarker);
     };
 
-    this.initialize();
+    self.initialize();
 };
 
 /* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
 window.addEventListener('load', function() {
     function updateOnlineStatus(event) {
         var condition = navigator.onLine ? "online" : "offline";
-        var status=document.getElementsByClassName('connection-lost-warning')[0];
+        var status=document.getElementById('connection-lost-warning');
         if (navigator.onLine) {
             status.classList.add("hidden");
         } else {

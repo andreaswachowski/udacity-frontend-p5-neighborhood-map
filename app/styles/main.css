@@ -29,6 +29,10 @@ button {
   vertical-align: baseline;
 }
 
+/* .marker-list shall be overlaid on .fullscreen, as described here:
+ * http://codepen.io/anon/pen/sojbd, referred to from
+ * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
+ */
 .marker-list {
   position: relative;
   top: 5em;
@@ -158,8 +162,8 @@ button {
     width: 80%; /* 384px / 480px */
   }
 
-  .pac-input {
-    /* TODO: Below 300px viewport width, the pac-input right margin
+  .filter-input {
+    /* TODO: Below 300px viewport width, the filter-input right margin
      * is not justified with the marker-list margin anymore.
      * It's a few pixels further left.
      */
@@ -173,12 +177,12 @@ button {
     width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
   }
 
-  .pac-input {
-    /* pac-input shall be right-justified with the marker-list
+  .filter-input {
+    /* filter-input shall be right-justified with the marker-list
      *
      * marker-list: pos  34 mar  - bor - pad 14 wid 384 pad 14 bor    - 446px from left up to incl right padding
      * Hence:
-     *   pac-input: pos 113 mar 12 bor 1 pad 13 wid 295 pad 11 bor 1
+     *   filter-input: pos 113 mar 12 bor 1 pad 13 wid 295 pad 11 bor 1
      *
      * Due to box-sizing=border-box in .controls, we have
      * width = 446px - 113px (position) - 12px (margin) = 321px. Or alternatively,
@@ -188,11 +192,7 @@ button {
   }
 }
 
-.map-canvas {
-  /* Overlaying the marker-list on the map as described here
-   * http://codepen.io/anon/pen/sojbd, referred to from
-   * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
-   */
+.fullscreen {
   position: absolute;
   top: 0;
   left: 0;
@@ -224,14 +224,14 @@ button {
   outline: none;
 }
 
-.pac-input {
+.filter-input {
   background-color: #fff;
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
 }
 
-.pac-input:focus {
+.filter-input:focus {
   border-color: #4d90fe;
 }
 
@@ -239,8 +239,10 @@ button {
   display: none;
 }
 
-/* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
-.connection-lost-warning {
+/* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events
+ * TODO: This class prescribes much more layout than its name indicates.
+ */
+.white-on-red-warning {
   position: relative;
   top: 1em;
   left: 1em;

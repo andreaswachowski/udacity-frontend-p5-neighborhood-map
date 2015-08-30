@@ -8,10 +8,10 @@
     <title>Neighborhood Map</title>
   </head>
   <body>
-    <div class="content">
-      <div class="connection-lost-warning hidden">Connection lost, please reconnect to continue</div>
-      <input class="pac-input controls" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
-      <div class="marker-list">
+    <div id="content">
+      <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
+      <input id="pac-input" class="filter-input controls" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
+      <div id="marker-list" class="marker-list">
         <h1>Places</h1>
         <ul data-bind="foreach: search()">
           <li data-bind="css: { editing: editing }">
@@ -23,9 +23,9 @@
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }"> </li>
         </ul>
       </div>
-      <div class="map-canvas"></div>
+      <div id="map-canvas" class="fullscreen"></div>
     </div>
-    <div class="offline-on-load hidden">The browser is offline. This page will automatically continue to load once an Internet connection has been established.</div>
+    <div id="offline-on-load" class="hidden">The browser is offline. This page will automatically continue to load once an Internet connection has been established.</div>
 
     <script src="js/knockout-3.3.0.js"></script>
     <script src="js/app.js"></script>
