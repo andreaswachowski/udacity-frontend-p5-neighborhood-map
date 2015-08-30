@@ -303,7 +303,10 @@ var ViewModel = function() {
     self.initialize = function() {
         var mapOptions = {
                 center: model.map.center,
-                zoom: model.map.initialZoomFactor
+                zoom: model.map.initialZoomFactor,
+                mapTypeControlOptions: {
+                    position: google.maps.ControlPosition.BOTTOM_LEFT
+                }
             },
             map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions),
             geocoder = new google.maps.Geocoder(),
