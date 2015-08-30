@@ -62,6 +62,20 @@ module.exports = function(grunt) {
             }
         },
 
+        htmllint: {
+            options: {
+                "id-class-style": "dash", // bootstrap style
+                "attr-name-style": "dash", // HTML5 has "aria-expanded", "data-toggle", etc.
+                "indent-style": "spaces",
+                "indent-width": 2
+            },
+            dev: [ '<%= config.app %>/index.html' ]
+        },
+
+        jshint: {
+            all: [ 'Gruntfile.js', '<%= config.app %>/js/**/*.js' ]
+        },
+
         // Compiles Sass to CSS and generates necessary files if requested
         sass: {
             options: {
@@ -163,6 +177,11 @@ module.exports = function(grunt) {
         },
 
         watch: {
+            bower: {
+                files: ['bower.json'],
+                tasks: ['wiredep']
+            },
+
             configFiles: {
                 files: [ 'Gruntfile.js' ],
                 options: {
@@ -170,13 +189,32 @@ module.exports = function(grunt) {
                 }
             },
 
-            js: {
-                files: ['<%= config.app %>/js/**/*.js'],
-                tasks: ['jshint','uglify'],
-                options: {
-                    spawn: false,
-                },
+// If I watch for JS changes, I need to recompile HTML as well, because the
+// fingerprints will change. Need a closer look at the yeoman-template to
+// understand what should happen. Ideally I setup a .tmp-development env
+// without fingerprinting and only run grunt dist explicitly, before a
+// production deploy
+//            js: {
+//                files: ['<%= config.app %>/js/**/*.js'],
+//                tasks: ['useminPrepare','concat', 'uglify:generated'],
+//                options: {
+//                    spawn: false,
+//                },
+//            },
+
+            sass: {
+                files: ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
+                tasks: ['sass', 'postcss']
             },
+        }
+    });
+
+    grunt.registerTask('lint', function (target) {
+        if (target !== 'watch') {
+            grunt.task.run([
+                'htmllint',
+                'jshint'
+            ]);
         }
     });
 
