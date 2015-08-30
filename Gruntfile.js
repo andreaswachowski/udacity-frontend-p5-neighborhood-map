@@ -162,9 +162,22 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            configFiles: {
+                files: [ 'Gruntfile.js' ],
+                options: {
+                    reload: true
+                }
+            },
 
-
-
+            js: {
+                files: ['<%= config.app %>/js/**/*.js'],
+                tasks: ['jshint','uglify'],
+                options: {
+                    spawn: false,
+                },
+            },
+        }
     });
 
     grunt.registerTask('build', [
