@@ -85,10 +85,6 @@ button {
 .dropdown-menu li .destroy:hover,
 .dropdown-menu li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
-  -o-transform: scale(1.3);
-  -ms-transform: scale(1.3);
-  -moz-transform: scale(1.3);
-  -webkit-transform: scale(1.3);
   transform: scale(1.3);
 }
 
@@ -122,10 +118,6 @@ button {
    * box-sizing: border-box. See
    * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
    */
-  -moz-box-sizing: border-box; /* ff2 */
-  -ms-box-sizing: border-box; /* ie8 */
-  -webkit-box-sizing: border-box; /* safari3 */
-  -khtml-box-sizing: border-box; /* konqueror */
   box-sizing: border-box;
 }
 
@@ -206,10 +198,6 @@ button {
 .marker-list li .destroy:hover,
 .marker-list li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
-  -o-transform: scale(1.3);
-  -ms-transform: scale(1.3);
-  -moz-transform: scale(1.3);
-  -webkit-transform: scale(1.3);
   transform: scale(1.3);
 }
 
@@ -247,10 +235,6 @@ button {
    * box-sizing: border-box. See
    * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
    */
-  -moz-box-sizing: border-box; /* ff2 */
-  -ms-box-sizing: border-box; /* ie8 */
-  -webkit-box-sizing: border-box; /* safari3 */
-  -khtml-box-sizing: border-box; /* konqueror */
   box-sizing: border-box;
 }
 
