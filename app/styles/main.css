@@ -5,6 +5,10 @@ html {
   height: 100%;
 }
 
+.on-top-of-map {
+  z-index: 2;
+}
+
 body {
   height: 100%;
   margin: 0;
@@ -12,6 +16,7 @@ body {
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
 }
+
 
 /* The marker-list styling is based on the #todo-list styling from the todo app
  * presented in lesson "Learning a New Codebase" in Udacity's "JavaScript
@@ -29,6 +34,112 @@ button {
   vertical-align: baseline;
 }
 
+.dropdown-menu {
+  overflow: auto;
+  min-width: 300px;
+}
+
+.dropdown-menu li {
+  position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
+  height: 48px;
+}
+
+.dropdown-menu li label {
+  display: block;
+  padding: 1em;
+}
+
+.dropdown-menu li .destroy,
+.dropdown-menu li .edit-btn {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  margin: auto 0;
+  transition: all 0.2s;
+}
+
+.dropdown-menu li .edit-btn {
+  right: 48px;
+}
+
+.dropdown-menu li .destroy {
+  /* Some space needed to the right, so when the button size increases
+   * upon hovering no horizontal scrollbar appears for the menu:
+   */
+  right: 6px;
+}
+
+.dropdown-menu li:hover label {
+  padding-right: 96px; /* Space depends on size of buttons to the right */
+}
+
+.dropdown-menu li:hover .destroy,
+.dropdown-menu li:hover .edit-btn {
+  display: block;
+}
+
+.dropdown-menu li .destroy:hover,
+.dropdown-menu li .edit-btn:hover {
+  text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
+  -o-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  -moz-transform: scale(1.3);
+  -webkit-transform: scale(1.3);
+  transform: scale(1.3);
+}
+
+.dropdown-menu li .edit-btn:after {
+  content: "✎";
+}
+
+.dropdown-menu li .destroy:after {
+  content: "✖";
+}
+
+.dropdown-menu li.editing {
+  padding: 0;
+}
+
+.edit {
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu li .edit {
+  display: none;
+}
+
+.dropdown-menu li.editing .edit {
+  display: block;
+  padding: 13px 17px 12px 0;
+  margin: 0;
+  width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
+
+  /* The width of the input element should fill the width of the surrounding
+   * div. It will not do so unless we use lots of tweaking, or apply
+   * box-sizing: border-box. See
+   * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
+   */
+  -moz-box-sizing: border-box; /* ff2 */
+  -ms-box-sizing: border-box; /* ie8 */
+  -webkit-box-sizing: border-box; /* safari3 */
+  -khtml-box-sizing: border-box; /* konqueror */
+  box-sizing: border-box;
+}
+
+/*
+.dropdown-menu li.editing .view {
+  display: none;
+}
+*/
+
+
 /* .marker-list shall be overlaid on .fullscreen, as described here:
  * http://codepen.io/anon/pen/sojbd, referred to from
  * http://stackoverflow.com/questions/26440578/float-a-div-over-google-maps-while-maintaining-bootstrap-responsiveness?lq=1
@@ -43,8 +154,7 @@ button {
    */
   left: 34px;
   padding: 1em;
-  max-height: 30vh;
-  z-index: 2;
+  max-height: 90vh;
   background: #fff;
   opacity: 0.8;
   border-radius: 1em;
@@ -87,7 +197,7 @@ button {
 }
 
 .marker-list li .destroy {
-  right: 0;
+  right: 0px;
 }
 
 .marker-list li:hover label {
@@ -161,34 +271,12 @@ button {
     padding-right: 2.9166%; /* 14px / 480px */
     width: 80%; /* 384px / 480px */
   }
-
-  .filter-input {
-    /* TODO: Below 300px viewport width, the filter-input right margin
-     * is not justified with the marker-list margin anymore.
-     * It's a few pixels further left.
-     */
-    width: calc(100% - 7.0835% - 113px - 12px); /* 321px/480px */
-  }
 }
 
 @media (min-width: 481px) {
   .marker-list {
     float: left;
     width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
-  }
-
-  .filter-input {
-    /* filter-input shall be right-justified with the marker-list
-     *
-     * marker-list: pos  34 mar  - bor - pad 14 wid 384 pad 14 bor    - 446px from left up to incl right padding
-     * Hence:
-     *   filter-input: pos 113 mar 12 bor 1 pad 13 wid 295 pad 11 bor 1
-     *
-     * Due to box-sizing=border-box in .controls, we have
-     * width = 446px - 113px (position) - 12px (margin) = 321px. Or alternatively,
-     * width = (1 + 13 + 295 + 11 + 1)px
-     */
-    width: 321px;
   }
 }
 
@@ -199,40 +287,6 @@ button {
   z-index: 1;
   width: 100%;
   height: 100%;
-}
-
-/* Styling of the search box based on (well, copied from) the example at
- * https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
- */
-
-.controls {
-  /* margin-top and height are adjusted to match the style of the map/satellite
-   * controls. But these hard-coded values everywhere are very uninspiring.
-   * There has to be a better way?! (I don't mean LESS or SCSS, it's the
-   * connection to the Google Map controls.) */
-  margin-top: 10px;
-  height: 34px;
-  border: 1px solid transparent;
-  border-radius: 2px 0 0 2px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.controls:focus {
-  outline: none;
-}
-
-.filter-input {
-  background-color: #fff;
-  margin-left: 12px;
-  padding: 0 11px 0 13px;
-  text-overflow: ellipsis;
-}
-
-.filter-input:focus {
-  border-color: #4d90fe;
 }
 
 .hidden {

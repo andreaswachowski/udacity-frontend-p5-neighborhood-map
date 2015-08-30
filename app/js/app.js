@@ -83,6 +83,8 @@ var Place = function(map,position) {
         lng: position.lng()
     };
     this.formatted_address = "";
+    this.street_number = "";
+    this.street_name = "";
     this.editing = ko.observable(false);
     this.marker = new google.maps.Marker({
         position: position,
@@ -305,8 +307,8 @@ var ViewModel = function() {
             },
             map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions),
             geocoder = new google.maps.Geocoder(),
-            input = document.getElementById('pac-input'),
             defaultBounds = new google.maps.LatLngBounds();
+            // input = document.getElementById('pac-input'),
 
         google.maps.event.addListener(map, 'click', function(e) {
             // An infowindow might be open when for example a place in
@@ -317,7 +319,7 @@ var ViewModel = function() {
             self.addPlace(geocoder, e.latLng, map);
         });
 
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     };
 
     self.destroyPlace = function(place) {
@@ -374,13 +376,19 @@ var ViewModel = function() {
                     // TODO: There is usually a *lot* more that can be
                     // extracted from the results.
                     place.formatted_address = results[0].formatted_address;
+                    place.street_number = results[0].address_components[0].long_name;
+                    place.street_name = results[0].address_components[1].long_name;
+                    // Note: The order of street name and street number in the initial title assignment should in fact be
+                    // locale-dependent.
+                    place.title(place.street_name + ' ' + place.street_number);
                 } else {
-                    place.formatted_address = 'unknown, no result found';
+                    place.formatted_address = 'unknown (GeoCoder lookup did not return a result)';
+                    place.title('unknown');
                 }
             } else {
-                place.formatted_address = 'unknown address (Geocoder failed due to ' + status + ')';
+                place.formatted_address = 'unknown (Geocoder failed due to ' + status + ')';
+                place.title('unknown');
             }
-            place.title(place.formatted_address);
             place.setInfowindowContent();
         });
 

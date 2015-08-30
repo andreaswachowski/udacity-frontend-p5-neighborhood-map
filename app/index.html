@@ -12,9 +12,42 @@
   </head>
   <body>
     <div id="content">
+      <nav class="on-top-of-map navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Places <span class="caret"></span></a>
+                <ul class="dropdown-menu" data-bind="foreach: search()">
+                  <li data-bind="css: { editing: editing }">
+                    <div class="view">
+                      <label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+                      <button class="edit-btn" data-bind="click: $root.editPlace"></button>
+                      <button class="destroy" data-bind="click: $root.destroyPlace"></button>
+                    </div>
+                    <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <input class="form-control" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
+            </form>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
       <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
-      <input id="pac-input" class="filter-input controls" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
-      <div id="marker-list" class="marker-list">
+<!--
+      <div id="marker-list" class="marker-list on-top-of-map">
         <h1>Places</h1>
         <ul data-bind="foreach: search()">
           <li data-bind="css: { editing: editing }">
@@ -25,7 +58,7 @@
             </div>
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }"> </li>
         </ul>
-      </div>
+      </div>-->
       <div id="map-canvas" class="fullscreen"></div>
     </div>
     <div id="offline-on-load" class="hidden">The browser is offline. This page will automatically continue to load once an Internet connection has been established.</div>
