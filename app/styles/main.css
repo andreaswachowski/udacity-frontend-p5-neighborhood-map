@@ -100,10 +100,6 @@ button {
   content: "✖";
 }
 
-.dropdown-menu li.editing {
-  padding: 0;
-}
-
 .edit {
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
@@ -117,7 +113,7 @@ button {
 
 .dropdown-menu li.editing .edit {
   display: block;
-  padding: 13px 17px 12px 0;
+  padding: 1em;
   margin: 0;
   width: 100%; /* only works correctly in conjunction with box-sizing border-box below */
 
@@ -133,11 +129,9 @@ button {
   box-sizing: border-box;
 }
 
-/*
 .dropdown-menu li.editing .view {
   display: none;
 }
-*/
 
 
 /* .marker-list shall be overlaid on .fullscreen, as described here:
