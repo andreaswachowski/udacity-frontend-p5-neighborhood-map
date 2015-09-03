@@ -17,8 +17,52 @@ module.exports = function(grunt) {
     grunt.initConfig({
         config: config,
 
+        browserSync: {
+            options: {
+                notify: false,
+                background: true
+            },
+            livereload: {
+                options: {
+                    files: [
+                        '<%= config.app %>/{,*/}*.html',
+                        '.tmp/styles/{,*/}*.css',
+                        '<%= config.app %>/images/{,*/}*',
+                        '<%= config.app %>/js/{,*/}*.js'
+                    ],
+                    port: 9000,
+                    server: {
+                        baseDir: [ '.tmp', config.app ],
+                        routes: {
+                            '/bower_components': './bower_components'
+                        }
+                    }
+                }
+            },
+            test: {
+                options: {
+                    port: 9001,
+                    open: false,
+                    logLevel: 'silent',
+                    host: 'localhost',
+                    server: {
+                        baseDir: ['.tmp', './test', config.app],
+                        routes: {
+                            '/bower_components': './bower_components'
+                        }
+                    }
+                }
+            },
+            dist: {
+                options: {
+                    background: false,
+                    server: '<%= config.dist %>'
+                }
+            }
+        },
+
         clean: {
-            tmp: {
+            server: {
                 files: [{
                     dot: true,
                     src: [
@@ -30,7 +74,7 @@ module.exports = function(grunt) {
             dist: {
                 files: [{
                     dot: true,
-                    src: [ '<%= config.dist %>/*' ]
+                    src: [ '.tmp', '<%= config.dist %>/*' ]
                 }
                 ]
             }
@@ -84,7 +128,7 @@ module.exports = function(grunt) {
                 sourceMapContents: true,
                 includePaths: ['.']
             },
-            dist: {
+            server: {
                 files: [{
                     expand: true,
                     cwd: '<%= config.app %>/styles',
@@ -105,7 +149,7 @@ module.exports = function(grunt) {
                     })
                 ]
             },
-            dist: {
+            server: {
                 files: [{
                     expand: true,
                     cwd: '.tmp/styles/',
@@ -216,6 +260,22 @@ module.exports = function(grunt) {
                 'jshint'
             ]);
         }
+    });
+
+    grunt.registerTask('serve', 'start the server and preview your app', function (target) {
+
+        if (target === 'dist') {
+            return grunt.task.run(['build', 'browserSync:dist']);
+        }
+
+        grunt.task.run([
+            'clean:server',
+            'wiredep',
+            'sass:server', // in yeoman: concurrent:server, including babel
+            'postcss',
+            'browserSync:livereload',
+            'watch'
+        ]);
     });
 
     grunt.registerTask('build', [
