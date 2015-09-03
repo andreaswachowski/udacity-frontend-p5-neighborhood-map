@@ -26,6 +26,7 @@ module.exports = function(grunt) {
                 options: {
                     files: [
                         '<%= config.app %>/{,*/}*.html',
+                        '<%= config.app %>/styles/*.css',
                         '.tmp/styles/{,*/}*.css',
                         '<%= config.app %>/images/{,*/}*',
                         '<%= config.app %>/js/{,*/}*.js'
@@ -245,6 +246,11 @@ module.exports = function(grunt) {
 //                    spawn: false,
 //                },
 //            },
+
+            css: {
+                files: ['<%= config.app %>/styles/{,*/}*.{css}'],
+                tasks: ['copy:dist' ]
+            },
 
             sass: {
                 files: ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
