@@ -399,6 +399,7 @@ var ViewModel = function() {
         });
 
         $( "#filter-places-textfield" ).keyup(function(e) {
+            // console.log(e.type + " on " + e.target.id);
             var code = e.which;
             if (code === ENTER_KEY) {
                 // I presume that e.preventDefault is avoiding the attempt to submit the form data,
@@ -413,6 +414,9 @@ var ViewModel = function() {
                 });
                 if (matchingPlaces.length === 1) {
                     self.showPlace(matchingPlaces[0]);
+                    // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
+                    // will not lead to confusion
+                    $("#filter-places-textfield").val("");
                 }
                 // else ignore ENTER_KEY
                 // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
