@@ -307,6 +307,13 @@ button {
     border: 0;
     box-shadow: none;
   }
+
+  /* Without this, the typeahead dropdown would be clipped at the bottom of
+   * the navbar.
+   */
+  .navbar-collapse.in {
+    overflow-y: visible;
+  }
 }
 
 .force-open > .dropdown-menu {
@@ -356,18 +363,6 @@ button {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 */
-}
-
-@media (max-width: 479px) {
-  .tt-menu {
-    position: static;
-    float: none;
-    width: auto;
-    margin-top: 0;
-    background-color: transparent;
-    border: 0;
-    box-shadow: none;
-  }
 }
 
 .tt-menu {
