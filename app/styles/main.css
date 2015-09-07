@@ -34,10 +34,10 @@ button {
   vertical-align: baseline;
 }
 
-.dropdown-menu {
+/*.dropdown-menu {
   overflow: auto;
   min-width: 300px;
-}
+}*/
 
 .dropdown-menu li {
   position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
@@ -286,3 +286,105 @@ button {
   padding: 0.5em;
   z-index: 3; /* Ensure it is on top of the Map */
 }
+
+/* Open state for the dropdown
+ *
+ * Copied from bootstrap because I could not explicitly
+ * control the dropdown visibility with the dropdown
+ * events.
+ */
+@media (max-width: 479px) {
+  .navbar-nav .force-open .dropdown-menu {
+    position: static;
+    float: none;
+    width: auto;
+    margin-top: 0;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+.force-open > .dropdown-menu {
+  display: block;
+}
+
+/* Remove the outline when :focus is triggered */
+.force-open > a {
+  outline: 0;
+}
+
+.scrollable-dropdown-menu .tt-menu {
+   max-height: 150px;
+   overflow-y: auto;
+ }
+
+/* -- Bootstrap 3 like styles for typeahead.js ------------------------- */
+/* from https://gist.github.com/bhays/6140058
+ * including the change from tt-dropdown-menu to tt-menu, and
+ * .tt-suggestion.tt-under-cursor to .tt-suggestion:hover
+ * as suggested by mkli90 in the comments below
+ */
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0;
+}
+
+.tt-hint {
+  display: block;
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #999;
+  vertical-align: middle;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  /* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+@media (max-width: 479px) {
+  .tt-menu {
+    position: static;
+    float: none;
+    width: auto;
+    margin-top: 0;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+.tt-menu {
+  min-width: 160px;
+  margin-top: 2px;
+  padding: 5px 0;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+
+}
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+}
+
+.tt-suggestion:hover {
+  color: #fff;
+  background-color: #428bca;
+}
+
+.tt-suggestion:hover a {
+  color: #fff;
+}
+.tt-suggestion p {
+  margin: 0;
+}
+
+/* --End of https://gist.github.com/bhays/6140058 ---------------------- */

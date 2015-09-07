@@ -26,6 +26,11 @@
           </div>
 
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form class="navbar-form navbar-left" role="search">
+              <div class="scrollable-dropdown-menu">
+                <input id="filter-places-textfield" class="form-control typeahead" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
+              </div>
+            </form>
             <ul class="nav navbar-nav">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Places <span class="caret"></span></a>
@@ -33,17 +38,14 @@
                   <li data-bind="css: { editing: editing }">
                     <div class="view">
                       <label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
-                      <button class="edit-btn" data-bind="click: $root.editPlace"></button>
-                      <button class="destroy" data-bind="click: $root.destroyPlace"></button>
+                      <button class="edit-btn" data-bind="click: $root.editPlace" data-keep-open-on-click></button>
+                      <button class="destroy" data-bind="click: $root.destroyPlace" data-keep-open-on-click></button>
                     </div>
                     <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
                   </li>
                 </ul>
               </li>
             </ul>
-            <form class="navbar-form navbar-left" role="search">
-              <input class="form-control" type="text" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
-            </form>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
@@ -69,6 +71,7 @@
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
     <script src="/bower_components/knockout/dist/knockout.js"></script>
+    <script src="/bower_components/typeahead.js/dist/typeahead.bundle.js"></script>
     <!-- endbower -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/button.js"></script>

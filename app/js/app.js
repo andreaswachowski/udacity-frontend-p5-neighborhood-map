@@ -25,7 +25,7 @@ function loadScript() {
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
-            '&signed_in=true&callback=initialize';
+        '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
         document.getElementById('content').classList.add("hidden");
@@ -34,11 +34,42 @@ function loadScript() {
     }
 }
 
+// See http://stackoverflow.com/questions/10480697/keep-bootstrap-dropdown-open-on-click
+//$(document).delegate("ul.dropdown-menu [data-keep-open-on-click]", "click", function(e) {
+//    e.stopPropagation();
+//});
+
+// Force the dropdown to open when the filter box is entered.
+// This did not work with the native Bootstrap "open" class - the dropdown was opened for
+// a split-second, then immediately closed afterwards, even though the focus was still
+// inside the search field. I could not see why certain events where fired and why not,
+// the custom class 'force-open' fixed the problem.
+// $( "#filter-places-textfield" ).focusin(function() {
+//     // $(".dropdown").addClass("open");
+//     $("dropdown-toggle").trigger("click");
+// });
+//
+// $("#filter-places-textfield").focusout(function() {
+//     $(".dropdown").removeClass("open");
+// });
+//
+/*
+$(function() {
+    $("ul.dropdown-menu").on("click", "[data-keep-open-on-click]", function(e) {
+        e.stopPropagation();
+    });
+});
+*/
+
 /**
  * Initializes the view model. Called from loadScript().
  */
 function initialize() {
+    // the ViewModel *must* be initialized not earlier than here, in initialize(),
+    // because otherwise the google.* objects are not yet loaded, and the ViewModel
+    // code would not run
     ko.applyBindings(new ViewModel());
+
 }
 
 /**
@@ -51,6 +82,51 @@ var model = {
     },
     places: [] // elements are of type Place, see below
 };
+
+var getPlaceTitles = function() {
+    return model.places.map(function(e) {
+        return e.title();
+    });
+};
+
+// See http://twitter.github.io/typeahead.js/examples/
+var substringMatcher = function() {
+    return function findMatches(q, cb) {
+        var matches, substringRegex;
+
+        // an array that will be populated with substring matches
+        matches = [];
+
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
+
+        // iterate through the pool of strings and for any string that
+        // contains the substring `q`, add it to the `matches` array
+        $.each(getPlaceTitles(), function(i, str) {
+            if (substrRegex.test(str)) {
+                matches.push(str);
+            }
+        });
+
+        cb(matches);
+    };
+};
+
+$('.scrollable-dropdown-menu .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1,
+    // It would be nice to be able to map the typeahead class names to the bootstrap class names
+    // and be done with it. But typeahead uses <divs> instead of <li>s, and groups each dataset
+    // in an additional <div>, instead of using one single <ul>
+    // classNames : {
+    //     menu: 'dropdown-menu'
+    // }
+}, {
+    name: 'places',
+    limit: 10,
+    source: substringMatcher()
+});
 
 /**
  * @external "google.maps"
@@ -322,7 +398,27 @@ var ViewModel = function() {
             self.addPlace(geocoder, e.latLng, map);
         });
 
-        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        $( "#filter-places-textfield" ).keyup(function(e) {
+            var code = e.which;
+            if (code === ENTER_KEY) {
+                // I presume that e.preventDefault is avoiding the attempt to submit the form data,
+                // but perhaps it is not needed
+                e.preventDefault();
+                var searchFieldText = $("#filter-places-textfield").val();
+                // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
+                // we want to change it, we have to do it in two places. Merge this.
+                var substrRegex = new RegExp(searchFieldText, 'i');
+                var matchingPlaces = model.places.filter(function(e) {
+                    return substrRegex.test(e.title());
+                });
+                if (matchingPlaces.length === 1) {
+                    self.showPlace(matchingPlaces[0]);
+                }
+                // else ignore ENTER_KEY
+                // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
+                // to show the user that too many places are selected
+            }
+        });
     };
 
     self.destroyPlace = function(place) {
