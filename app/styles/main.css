@@ -39,6 +39,29 @@ button {
   min-width: 300px;
 }*/
 
+/* Use at least 16px for the filter search box to avoid auto zooming on ios devices
+ *
+ * If I don't do that, then (e.g. on an iPhone 6), when entering the
+ * "filter" text field, the navbar will zoom out just a little bit, such
+ * that the Hamburger icon is only half-way shown, and upon pressing "Done"
+ * it does *not* revert back to its original size.  It looks weird, and it
+ * is difficult to scale back manually because the user must take care to
+ * pinch only in the none-Google-maps section on the screen (otherwise
+ * zooming only the map)
+ *
+ * See also:
+ * http://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone#answer-19785420
+ * http://stackoverflow.com/questions/3839809/detect-iphone-ipad-purely-by-css
+ */
+@media only screen and (-webkit-device-pixel-ratio: 2),
+only screen and (-webkit-device-pixel-ratio: 1.5),
+only screen and (-webkit-device-pixel-ratio: 1)
+{
+  .form-control {
+    font-size: 16px;
+  }
+}
+
 .dropdown-menu li {
   position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
   height: 48px;
@@ -315,9 +338,9 @@ button {
 }
 
 .scrollable-dropdown-menu .tt-menu {
-   max-height: 150px;
-   overflow-y: auto;
- }
+  max-height: 150px;
+  overflow-y: auto;
+}
 
 /* -- Bootstrap 3 like styles for typeahead.js ------------------------- */
 /* from https://gist.github.com/bhays/6140058
