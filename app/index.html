@@ -13,8 +13,7 @@
     <title>Neighborhood Map</title>
   </head>
   <body>
-    <div id="content">
-      <nav class="on-top-of-map navbar navbar-default">
+      <nav class="navbar navbar-default">
         <div class="container-fluid">
           <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -49,7 +48,6 @@
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
-      <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
 <!--
       <div id="marker-list" class="marker-list on-top-of-map">
         <h1>Places</h1>
@@ -63,9 +61,10 @@
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }"> </li>
         </ul>
       </div>-->
-      <div id="map-canvas" class="fullscreen"></div>
-    </div>
-    <div id="offline-on-load" class="hidden">The browser is offline. This page will automatically continue to load once an Internet connection has been established.</div>
+      <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
+      <div id="map-canvas" class="fill-screen"></div>
+    <div id="offline-on-load" class="white-on-red-warning hidden">The browser is offline. Connect to the Internet and wait
+      for the page to reload.</div>
 
 <!-- build:js(.) js/vendor.js -->
     <!-- bower:js -->

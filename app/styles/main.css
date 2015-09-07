@@ -1,12 +1,14 @@
+/* TODO(refactor): Use SCSS instead of CSS, and refer to Bootstrap's $navbar-height instead of
+ * hardcoding "50px" multiple times.
+ * In the same vein, initialize $navbar-margin-bottom to 0 instead of
+ * setting the margin here in CSS
+ */
+
 /* See https://developers.google.com/maps/documentation/javascript/tutorial
  * html and body 100% height declarations are necessary.
  */
 html {
   height: 100%;
-}
-
-.on-top-of-map {
-  z-index: 2;
 }
 
 body {
@@ -15,6 +17,10 @@ body {
   padding: 0;
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
+}
+
+.navbar {
+  margin-bottom: 0;
 }
 
 
@@ -258,13 +264,12 @@ button {
   }
 }
 
-.fullscreen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
+.fill-screen {
+  /* Use all space except that taken up by the navbar for this element.
+   * The navbar has a min-height of 50px
+   * TODO: How can I solve this without relying on knowing the navbar height?
+   */
+  height: calc(100% - 50px);
 }
 
 .hidden {
@@ -275,11 +280,10 @@ button {
  * TODO: This class prescribes much more layout than its name indicates.
  */
 .white-on-red-warning {
-  position: relative;
-  top: 1em;
+  position: absolute;
+  top: calc(50px + 1em); /* A little bit below the navbar, which is 50px high */
   left: 1em;
   border-radius: 0.2em;
-  width: 30%;
   font: bold 1em sans-serif;
   color: #FFF;
   background: red;

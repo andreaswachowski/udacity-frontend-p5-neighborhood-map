@@ -20,16 +20,20 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  */
 function loadScript() {
     if (navigator.onLine) {
-        document.getElementById('content').classList.remove("hidden");
-        document.getElementById('offline-on-load').classList.add("hidden");
+        $("nav").removeClass("hidden");
+        $("#map-canvas").removeClass("hidden");
+
+        $("#offline-on-load").addClass("hidden");
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
         '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
-        document.getElementById('content').classList.add("hidden");
-        document.getElementById('offline-on-load').classList.remove("hidden");
+        $("nav").addClass("hidden");
+        $("#map-canvas").addClass("hidden");
+
+        $("#offline-on-load").removeClass("hidden");
         setTimeout(loadScript, 3000);
     }
 }
