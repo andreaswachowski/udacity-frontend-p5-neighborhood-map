@@ -39,29 +39,6 @@ button {
   min-width: 300px;
 }*/
 
-/* Use at least 16px for the filter search box to avoid auto zooming on ios devices
- *
- * If I don't do that, then (e.g. on an iPhone 6), when entering the
- * "filter" text field, the navbar will zoom out just a little bit, such
- * that the Hamburger icon is only half-way shown, and upon pressing "Done"
- * it does *not* revert back to its original size.  It looks weird, and it
- * is difficult to scale back manually because the user must take care to
- * pinch only in the none-Google-maps section on the screen (otherwise
- * zooming only the map)
- *
- * See also:
- * http://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone#answer-19785420
- * http://stackoverflow.com/questions/3839809/detect-iphone-ipad-purely-by-css
- */
-@media only screen and (-webkit-device-pixel-ratio: 2),
-only screen and (-webkit-device-pixel-ratio: 1.5),
-only screen and (-webkit-device-pixel-ratio: 1)
-{
-  .form-control {
-    font-size: 16px;
-  }
-}
-
 .dropdown-menu li {
   position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
   height: 48px;
@@ -354,19 +331,27 @@ only screen and (-webkit-device-pixel-ratio: 1)
 }
 
 .tt-hint {
-  display: block;
+  /* I don't need the hint, so don't display it. */
+  display: none;
+  /* If it were displayed, the settings below are practically identical to
+   * Bootstrap's form-control setting, so the text overlays correctly.
+   * Still, there seems to be a hint of a shadow when the too overlap, and
+   * I don't know why yet.
+   */
+/*
   width: 100%;
-  height: 38px;
-  padding: 8px 12px;
+  height: 34px;
+  padding: 6px 12px;
   font-size: 14px;
   line-height: 1.428571429;
   color: #999;
   vertical-align: middle;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
+  background-color: #fff;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  /* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+*/
 }
 
 @media (max-width: 479px) {
@@ -411,3 +396,31 @@ only screen and (-webkit-device-pixel-ratio: 1)
 }
 
 /* --End of https://gist.github.com/bhays/6140058 ---------------------- */
+
+/* Use at least 16px for the filter search box to avoid auto zooming on ios devices
+ *
+ * If I don't do that, then (e.g. on an iPhone 6), when entering the
+ * "filter" text field, the navbar will zoom out just a little bit, such
+ * that the Hamburger icon is only half-way shown, and upon pressing "Done"
+ * it does *not* revert back to its original size.  It looks weird, and it
+ * is difficult to scale back manually because the user must take care to
+ * pinch only in the none-Google-maps section on the screen (otherwise
+ * zooming only the map)
+ *
+ * See also:
+ * http://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone#answer-19785420
+ * http://stackoverflow.com/questions/3839809/detect-iphone-ipad-purely-by-css
+ */
+@media only screen and (-webkit-device-pixel-ratio: 2),
+only screen and (-webkit-device-pixel-ratio: 1.5),
+only screen and (-webkit-device-pixel-ratio: 1)
+{
+  .form-control {
+    font-size: 16px;
+  }
+
+  .tt-hint {
+    font-size: 16px;
+  }
+}
+
