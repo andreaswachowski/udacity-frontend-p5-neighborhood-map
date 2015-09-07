@@ -309,7 +309,7 @@ button {
   }
 
   /* Without this, the typeahead dropdown would be clipped at the bottom of
-   * the navbar.
+   * the navbar, because Bootstrap configures "overflow-y: auto".
    */
   .navbar-collapse.in {
     overflow-y: visible;
