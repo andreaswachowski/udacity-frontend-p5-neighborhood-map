@@ -415,6 +415,8 @@ var ViewModel = function() {
                 self.showPlace(matchingPlaces[0]);
                 // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
                 // will not lead to confusion
+                $(".searchclear").addClass("hidden");
+                $(".typeahead").typeahead("val", "");
                 $(".tt-input").blur().val("");
             }
             // else ignore
@@ -422,12 +424,25 @@ var ViewModel = function() {
             // to show the user that too many places are selected
         };
 
-        $( ".btn" ).click(function(e) {
+        $(".searchclear").click(function() {
+            // TODO(refactor): How can I address the searchclear-elementset implicitly, without having to specify it again?
+            // "this" does not work, neither referring to a passed-in function argument
+            $(".searchclear").addClass("hidden");
+            $(".typeahead").typeahead("val", "");
+            $(".tt-input").val("").focus();
+        });
+
+        $(".btn").click(function(e) {
             self.panToMatchIfUnique();
         });
 
-        $( ".tt-input" ).keyup(function(e) {
+        $(".tt-input").keyup(function(e) {
             // console.log(e.type + " on " + e.target.id);
+            if ($(".tt-input").val() === "") {
+                $(".searchclear").addClass("hidden");
+            } else {
+                $(".searchclear").removeClass("hidden");
+            }
             var code = e.which;
             if (code === ENTER_KEY) {
                 self.panToMatchIfUnique();

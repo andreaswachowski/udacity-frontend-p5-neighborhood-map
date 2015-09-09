@@ -85,7 +85,7 @@ module.exports = function(grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    dots: true,
+                    dot: true,
                     cwd: 'app',
                     dest: '<%= config.dist %>',
                     src: [
@@ -93,6 +93,13 @@ module.exports = function(grunt) {
                         'js/*.js',
                         'styles/*.css'
                     ]
+                }, {
+                    expand: true,
+                    dot: true,
+                    flatten: true,
+                    cwd: '.',
+                    src: 'bower_components/bootstrap-sass/assets/fonts/bootstrap/*',
+                    dest: '<%= config.dist %>/fonts'
                 }]
             }
         },

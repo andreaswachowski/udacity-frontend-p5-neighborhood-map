@@ -27,7 +27,10 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <form class="navbar-form navbar-left" action="#" onsubmit="return false;" role="search">
             <div class="scrollable-dropdown-menu">
-              <input class="form-control typeahead" type="search" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
+              <div class="btn-group">
+                <input class="form-control typeahead" type="search" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
+                <span class="searchclear glyphicon glyphicon-remove-circle hidden"></span>
+              </div>
               <button class="btn btn-default" type="button">Go</button>
             </div>
           </form>
