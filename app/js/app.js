@@ -48,12 +48,12 @@ function loadScript() {
 // a split-second, then immediately closed afterwards, even though the focus was still
 // inside the search field. I could not see why certain events where fired and why not,
 // the custom class 'force-open' fixed the problem.
-// $( "#filter-places-textfield" ).focusin(function() {
+// $( ".tt-input" ).focusin(function() {
 //     // $(".dropdown").addClass("open");
 //     $("dropdown-toggle").trigger("click");
 // });
 //
-// $("#filter-places-textfield").focusout(function() {
+// $(".tt-input").focusout(function() {
 //     $(".dropdown").removeClass("open");
 // });
 //
@@ -402,29 +402,35 @@ var ViewModel = function() {
             self.addPlace(geocoder, e.latLng, map);
         });
 
-        $( "#filter-places-textfield" ).keyup(function(e) {
+
+        self.panToMatchIfUnique = function() {
+            var searchFieldText = $(".tt-input").val();
+            // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
+            // we want to change it, we have to do it in two places. Merge this.
+            var substrRegex = new RegExp(searchFieldText, 'i');
+            var matchingPlaces = model.places.filter(function(e) {
+                return substrRegex.test(e.title());
+            });
+            if (matchingPlaces.length === 1) {
+                self.showPlace(matchingPlaces[0]);
+                // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
+                // will not lead to confusion
+                $(".tt-input").blur().val("");
+            }
+            // else ignore
+            // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
+            // to show the user that too many places are selected
+        };
+
+        $( ".btn" ).click(function(e) {
+            self.panToMatchIfUnique();
+        });
+
+        $( ".tt-input" ).keyup(function(e) {
             // console.log(e.type + " on " + e.target.id);
             var code = e.which;
             if (code === ENTER_KEY) {
-                // I presume that e.preventDefault is avoiding the attempt to submit the form data,
-                // but perhaps it is not needed
-                e.preventDefault();
-                var searchFieldText = $("#filter-places-textfield").val();
-                // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
-                // we want to change it, we have to do it in two places. Merge this.
-                var substrRegex = new RegExp(searchFieldText, 'i');
-                var matchingPlaces = model.places.filter(function(e) {
-                    return substrRegex.test(e.title());
-                });
-                if (matchingPlaces.length === 1) {
-                    self.showPlace(matchingPlaces[0]);
-                    // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
-                    // will not lead to confusion
-                    $("#filter-places-textfield").val("");
-                }
-                // else ignore ENTER_KEY
-                // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
-                // to show the user that too many places are selected
+                self.panToMatchIfUnique();
             }
         });
     };
