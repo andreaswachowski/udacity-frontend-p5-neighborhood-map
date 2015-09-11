@@ -1,7 +1,8 @@
 /* TODO(refactor): Use SCSS instead of CSS, and refer to Bootstrap's $navbar-height instead of
  * hardcoding "50px" multiple times.
- * In the same vein, initialize $navbar-margin-bottom to 0 instead of
- * setting the margin here in CSS
+ * In the same vein,
+ * - initialize $navbar-margin-bottom to 0 instead of setting the margin here in CSS
+ * - use $grid-float-breakpoint(+1) for the @media widths
  */
 
 /* See https://developers.google.com/maps/documentation/javascript/tutorial
@@ -15,7 +16,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
 }
 
@@ -88,6 +89,15 @@ button {
   display: block;
 }
 
+@media (max-width: 768px) {
+  /* Make sure the edit/destroy buttons are shown on mobile
+   */
+  .dropdown-menu li .destroy,
+  .dropdown-menu li .edit-btn {
+    display: block;
+  }
+}
+
 .dropdown-menu li .destroy:hover,
 .dropdown-menu li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
@@ -103,7 +113,7 @@ button {
 }
 
 .edit {
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4em;
   margin: 0;
   padding: 0;
@@ -248,7 +258,7 @@ button {
   display: none;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .marker-list {
     left: 7.0835%; /* ((384px + 2em) / 480px) / 2, with 1em == 14px */
     padding-left: 2.9166%; /* 14px / 480px */
@@ -267,7 +277,7 @@ button {
   }
 }
 
-@media (min-width: 481px) {
+@media (min-width: 769px) {
   .marker-list {
     float: left;
     width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
@@ -307,7 +317,7 @@ button {
  * control the dropdown visibility with the dropdown
  * events.
  */
-@media (max-width: 479px) {
+@media (max-width: 768px) {
   .navbar-nav .force-open .dropdown-menu {
     position: static;
     float: none;

@@ -381,16 +381,21 @@ var ViewModel = function() {
         });
 
 
-        self.panToMatchIfUnique = function() {
-            var searchFieldText = $(".tt-input").val();
+        self.uniqueMatch = function(searchFieldText) {
             // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
             // we want to change it, we have to do it in two places. Merge this.
             var substrRegex = new RegExp(searchFieldText, 'i');
             var matchingPlaces = model.places.filter(function(e) {
                 return substrRegex.test(e.title());
             });
-            if (matchingPlaces.length === 1) {
-                self.showPlace(matchingPlaces[0]);
+            return matchingPlaces.length === 1 ? matchingPlaces[0] : false;
+        }
+
+        self.panToMatchIfUnique = function() {
+            var searchFieldText = $(".tt-input").val();
+            var uniquePlace = self.uniqueMatch(searchFieldText);
+            if (uniquePlace) {
+                self.showPlace(uniquePlace);
                 // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
                 // will not lead to confusion
                 $(".searchclear").addClass("hidden");
@@ -406,21 +411,35 @@ var ViewModel = function() {
             // TODO(refactor): How can I address the searchclear-elementset implicitly, without having to specify it again?
             // "this" does not work, neither referring to a passed-in function argument
             $(".searchclear").addClass("hidden");
+            $(".btn").addClass("hidden");
             $(".typeahead").typeahead("val", "");
             $(".tt-input").val("").focus();
         });
 
         $(".btn").click(function(e) {
             self.panToMatchIfUnique();
+            $(".btn").addClass("hidden");
+        });
+
+        // When an autocomplete result is selected, trigger keyup so that the "Go" button is displayed
+        $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
+            $(".tt-input").keyup();
         });
 
         $(".tt-input").keyup(function(e) {
+            var searchFieldText = $(".tt-input").val();
             // console.log(e.type + " on " + e.target.id);
-            if ($(".tt-input").val() === "") {
+            if (searchFieldText === "") {
                 $(".searchclear").addClass("hidden");
             } else {
                 $(".searchclear").removeClass("hidden");
             }
+            if (self.uniqueMatch(searchFieldText)) {
+                $(".btn").removeClass("hidden");
+            } else {
+                $(".btn").addClass("hidden");
+            }
+
             var code = e.which;
             if (code === ENTER_KEY) {
                 self.panToMatchIfUnique();
