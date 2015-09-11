@@ -427,6 +427,9 @@ var ViewModel = function() {
         });
 
         $(".tt-input").keyup(function(e) {
+            // Hide info window that might still show after filtering for a previous place
+            self.closeInfoWindows();
+
             var searchFieldText = $(".tt-input").val();
             // console.log(e.type + " on " + e.target.id);
             if (searchFieldText === "") {
