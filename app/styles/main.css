@@ -255,6 +255,16 @@ button {
     padding-right: 2.9166%; /* 14px / 480px */
     width: 80%; /* 384px / 480px */
   }
+
+  /* In the collapsed view, without removing the top margin, there would be
+   * an ugly double line between the Hamburger icon row and the filter row.
+   * Further, we must only remove the margin in the collapsed view, because
+   * otherwise the filter textfield would not be vertically centered in the
+   * navbar anymore.
+   */
+  .navbar-form {
+    margin-top: 0;
+  }
 }
 
 @media (min-width: 481px) {
