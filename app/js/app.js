@@ -573,6 +573,9 @@ var ViewModel = function() {
         });
 
         google.maps.event.addListener(gMarker,'mouseover',function() {
+            // An infowindow might me open after a typeahead search, that has to be closed
+            self.closeInfoWindows();
+
             place.infowindow.open(gMarker.get('map'), gMarker);
         });
 
