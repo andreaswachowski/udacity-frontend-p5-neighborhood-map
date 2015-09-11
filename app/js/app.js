@@ -162,11 +162,21 @@ Place.prototype.addVenues = function(venues,viewModel) {
     // and assign it to the Place's venues property (which is a
     // ko.observableArray).
     this.venues(venues.map(function (e) {
+        var categories = e.categories.map(function (c) {
+                return { name: c.name };
+            });
         return {
             id: e.id,
             name: e.name,
-            categories: e.categories.map(function (c) {
-                return { name: c.name };
+            categories: categories,
+            categoryStr: ko.computed(function() {
+                var categoryStr = categories.map(function(c) {
+                    return c.name;
+                }).join();
+                if (categoryStr !== "") {
+                    categoryStr = " (" + categoryStr + ")";
+                }
+                return categoryStr;
             })
         };
     }));
@@ -308,6 +318,7 @@ var ViewModel = function() {
     self.infoWindow = new google.maps.InfoWindow();
 
     self.places = ko.observableArray(model.places);
+    self.currentPlace = ko.observable();
 
     self.query = ko.observable('');
 
@@ -412,39 +423,9 @@ var ViewModel = function() {
         });
     };
 
-    // TODO: It would be much (!) nicer to keep this HTML in index.html.
-    // Can I use knockout templates? (I think I would have to, because
-    // there might be multiple info windows shown. But how do I bind to
-    // the various places?
-    // var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
-    //
-    // TODO: In addition, anytime an observable changes, I manually have to
-    // call (ie not forget to call!) setInfowindowContent. It is not possible
-    // to make the infowindow HTML a ko.computed() and assign it to the
-    // content of the infowindow - Google expects a String and would return an
-    // error.
     self.setInfowindowContent = function(place) {
-        var str = '<h3>'+place.title() + '</h3>' +
-            '<div>'+place.formatted_address + '</div>';
-
-        if (place.venues().length > 0) {
-            str += '<h4>In the vicinity</h4>';
-            str += '<ul>';
-            place.venues().forEach(function(v, index, array) {
-                str += '<li>' + v.name;
-                var categoryStr = v.categories.map(function(c) {
-                    return c.name;
-                }).join();
-                if (categoryStr !== "") {
-                    str += " (" + categoryStr + ")";
-                }
-                str += "</li>";
-            });
-            str += "</ul>";
-        } else /* silently ignore missing information, but show a warning */ if (place.fourSquareLookupError()) {
-            str += '<p>' + place.fourSquareLookupError() + '</p>';
-        }
-        self.infoWindow.setContent(str);
+        self.currentPlace(place);
+        self.infoWindow.setContent($("#infowindow")[0].innerHTML);
     };
 
     self.destroyPlace = function(place,e) {

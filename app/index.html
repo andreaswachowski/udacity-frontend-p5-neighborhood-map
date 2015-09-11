@@ -61,6 +61,25 @@
     <div id="offline-on-load" class="white-on-red-warning hidden">The browser is offline. Connect to the Internet and wait
         for the page to reload.</div>
 
+    <div id="infowindow" data-bind="with: currentPlace">
+      <h3 data-bind="text: title"></h3>
+      <div data-bind="text: formatted_address"></div>
+      <div data-bind="if: venues().length > 0">
+        <h4>In the vicinity</h4>
+        <ul data-bind="foreach: venues()">
+          <li>
+            <span data-bind="text: name"></span>
+            <span data-bind="text: categoryStr">
+          </li>
+        </ul>
+      </div>
+      <!-- ko ifnot: venues().length > 0 -->
+        <!-- ko if: fourSquareLookupError() -->/* silently ignore missing information, but show a warning */
+        <p data-bind="text: fourSquareLookupError()"></p>
+        <!-- /ko -->
+      <!-- /ko -->
+    </div>
+
 <!-- build:js(.) js/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
