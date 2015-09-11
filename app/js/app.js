@@ -146,6 +146,7 @@ var Place = function(map,position) {
     this.editing = ko.observable(false);
     this.marker = new google.maps.Marker({
         position: position,
+        animation: google.maps.Animation.DROP,
         map: map
     });
     this.venues = ko.observableArray();
@@ -534,11 +535,19 @@ var ViewModel = function() {
 
         google.maps.event.addListener(gMarker,'click',function() {
             map.panTo(gMarker.getPosition());
+            self.bounceMarker(gMarker);
         });
 
         google.maps.event.addListener(gMarker,'mouseover',function() {
             self.openInfowindow(gMarker);
         });
+    };
+
+    self.bounceMarker = function(gMarker) {
+        gMarker.setAnimation(google.maps.Animation.BOUNCE);
+        window.setTimeout(function() {
+            gMarker.setAnimation(null);
+        }, 1400); // http://stackoverflow.com/questions/7339200/bounce-a-pin-in-google-maps-once
     };
 
     self.placeForMarker = function(gMarker) {
@@ -563,6 +572,7 @@ var ViewModel = function() {
         var gMarker = place.marker;
         gMarker.getMap().panTo(gMarker.getPosition());
         self.openInfowindow(gMarker);
+        self.bounceMarker(gMarker);
     };
 
     self.initialize();
