@@ -41,14 +41,10 @@ button {
   vertical-align: baseline;
 }
 
-/*.dropdown-menu {
-  overflow: auto;
-  min-width: 300px;
-}*/
-
 .dropdown-menu li {
   position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
   height: 48px;
+  min-width: 300px;
 }
 
 .dropdown-menu li label {
