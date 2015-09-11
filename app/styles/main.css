@@ -89,15 +89,6 @@ button {
   display: block;
 }
 
-@media (max-width: 768px) {
-  /* Make sure the edit/destroy buttons are shown on mobile
-   */
-  .dropdown-menu li .destroy,
-  .dropdown-menu li .edit-btn {
-    display: block;
-  }
-}
-
 .dropdown-menu li .destroy:hover,
 .dropdown-menu li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
@@ -199,7 +190,7 @@ button {
 }
 
 .marker-list li .destroy {
-  right: 0px;
+  right: 0;
 }
 
 .marker-list li:hover label {
@@ -256,32 +247,6 @@ button {
 
 .marker-list li.editing .view {
   display: none;
-}
-
-@media (max-width: 768px) {
-  .marker-list {
-    left: 7.0835%; /* ((384px + 2em) / 480px) / 2, with 1em == 14px */
-    padding-left: 2.9166%; /* 14px / 480px */
-    padding-right: 2.9166%; /* 14px / 480px */
-    width: 80%; /* 384px / 480px */
-  }
-
-  /* In the collapsed view, without removing the top margin, there would be
-   * an ugly double line between the Hamburger icon row and the filter row.
-   * Further, we must only remove the margin in the collapsed view, because
-   * otherwise the filter textfield would not be vertically centered in the
-   * navbar anymore.
-   */
-  .navbar-form {
-    margin-top: 0;
-  }
-}
-
-@media (min-width: 769px) {
-  .marker-list {
-    float: left;
-    width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
-  }
 }
 
 .fill-screen {
@@ -416,6 +381,51 @@ button {
 
 /* --End of https://gist.github.com/bhays/6140058 ---------------------- */
 
+.searchclear {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  bottom: 0;
+  height: 14px;
+  margin: auto;
+  font-size: 14px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  /* Make sure the edit/destroy buttons are shown on mobile
+   */
+  .dropdown-menu li .destroy,
+  .dropdown-menu li .edit-btn {
+    display: block;
+  }
+
+  .marker-list {
+    left: 7.0835%; /* ((384px + 2em) / 480px) / 2, with 1em == 14px */
+    padding-left: 2.9166%; /* 14px / 480px */
+    padding-right: 2.9166%; /* 14px / 480px */
+    width: 80%; /* 384px / 480px */
+  }
+
+  /* In the collapsed view, without removing the top margin, there would be
+   * an ugly double line between the Hamburger icon row and the filter row.
+   * Further, we must only remove the margin in the collapsed view, because
+   * otherwise the filter textfield would not be vertically centered in the
+   * navbar anymore.
+   */
+  .navbar-form {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 769px) {
+  .marker-list {
+    float: left;
+    width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
+  }
+}
+
 /* Use at least 16px for the filter search box to avoid auto zooming on ios devices
  *
  * If I don't do that, then (e.g. on an iPhone 6), when entering the
@@ -443,14 +453,3 @@ only screen and (-webkit-device-pixel-ratio: 1)
   }
 }
 
-.searchclear {
-  position: absolute;
-  right: 5px;
-  top: 0;
-  bottom: 0;
-  height: 14px;
-  margin: auto;
-  font-size: 14px;
-  cursor: pointer;
-  color: #ccc;
-}
