@@ -361,6 +361,7 @@ var ViewModel = function() {
                 $(".searchclear").addClass("hidden");
                 $(".typeahead").typeahead("val", "");
                 $(".tt-input").blur().val("");
+                $(".btn").addClass("hidden");
             }
             // else ignore
             // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
@@ -383,7 +384,7 @@ var ViewModel = function() {
 
         // When an autocomplete result is selected, trigger keyup so that the "Go" button is displayed
         $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
-            $(".tt-input").keyup();
+            self.panToMatchIfUnique();
         });
 
         $(".tt-input").keyup(function(e) {
