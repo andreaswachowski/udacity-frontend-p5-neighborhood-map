@@ -362,6 +362,7 @@ var ViewModel = function() {
                 $(".typeahead").typeahead("val", "");
                 $(".tt-input").blur().val("");
                 $(".btn").addClass("hidden");
+                self.query(""); // Make sure all markers are visible again
             }
             // else ignore
             // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
