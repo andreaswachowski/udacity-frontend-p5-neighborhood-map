@@ -42,7 +42,11 @@
                   <div class="view">
                     <label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
                     <button class="edit-btn" data-bind="click: $root.editPlace" data-keep-open-on-click></button>
-                    <button class="destroy" data-bind="click: $root.destroyPlace" data-keep-open-on-click></button>
+                    <!-- Clicking the destroy button shall not bubble, thereby avoiding closing the dropdown, but the
+                      data-keep-open-on-click approach is not working, because Knockout immediately triggers destroyPlace,
+                      without jQuery having the chance to catch the event. Hence using Knockouts event-binding to stop
+                      propagation.  -->
+                    <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
                   </div>
                   <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
                 </li>

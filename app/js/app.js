@@ -39,31 +39,9 @@ function loadScript() {
 }
 
 // See http://stackoverflow.com/questions/10480697/keep-bootstrap-dropdown-open-on-click
-//$(document).delegate("ul.dropdown-menu [data-keep-open-on-click]", "click", function(e) {
-//    e.stopPropagation();
-//});
-
-// Force the dropdown to open when the filter box is entered.
-// This did not work with the native Bootstrap "open" class - the dropdown was opened for
-// a split-second, then immediately closed afterwards, even though the focus was still
-// inside the search field. I could not see why certain events where fired and why not,
-// the custom class 'force-open' fixed the problem.
-// $( ".tt-input" ).focusin(function() {
-//     // $(".dropdown").addClass("open");
-//     $("dropdown-toggle").trigger("click");
-// });
-//
-// $(".tt-input").focusout(function() {
-//     $(".dropdown").removeClass("open");
-// });
-//
-/*
-$(function() {
-    $("ul.dropdown-menu").on("click", "[data-keep-open-on-click]", function(e) {
-        e.stopPropagation();
-    });
+$(document).delegate("ul.dropdown-menu [data-keep-open-on-click]", "click", function(e) {
+    e.stopPropagation();
 });
-*/
 
 /**
  * Initializes the view model. Called from loadScript().
@@ -450,7 +428,11 @@ var ViewModel = function() {
         });
     };
 
-    self.destroyPlace = function(place) {
+    self.destroyPlace = function(place,e) {
+        // Stop the event propagation to avoid closing the drop down, from which the destroy action was triggered.
+        e.stopPropagation();
+
+        // Remove the element
         var placesArray = self.places;
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
         removedPlacesArray[0].marker.setMap(null); // remove marker from Google Map
