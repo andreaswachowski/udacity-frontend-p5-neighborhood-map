@@ -150,7 +150,6 @@ var Place = function(map,position) {
     });
     this.venues = ko.observableArray();
     this.fourSquareLookupError = ko.observable();
-    this.infowindow = new google.maps.InfoWindow();
 };
 
 /**
@@ -171,41 +170,6 @@ Place.prototype.addVenues = function(venues,viewModel) {
             })
         };
     }));
-};
-
-// TODO: It would be much (!) nicer to keep this HTML in index.html.
-// Can I use knockout templates? (I think I would have to, because
-// there might be multiple info windows shown. But how do I bind to
-// the various places?
-// var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
-//
-// TODO: In addition, anytime an observable changes, I manually have to
-// call (ie not forget to call!) setInfowindowContent. It is not possible
-// to make the infowindow HTML a ko.computed() and assign it to the
-// content of the infowindow - Google expects a String and would return an
-// error.
-Place.prototype.setInfowindowContent = function() {
-    var str = '<h3>'+this.title() + '</h3>' +
-        '<div>'+this.formatted_address + '</div>';
-
-    if (this.venues().length > 0) {
-        str += '<h4>In the vicinity</h4>';
-        str += '<ul>';
-        this.venues().forEach(function(v, index, array) {
-            str += '<li>' + v.name;
-            var categoryStr = v.categories.map(function(c) {
-                return c.name;
-            }).join();
-            if (categoryStr !== "") {
-                str += " (" + categoryStr + ")";
-            }
-            str += "</li>";
-        });
-        str += "</ul>";
-    } else /* silently ignore missing information, but show a warning */ if (this.fourSquareLookupError()) {
-        str += '<p>' + this.fourSquareLookupError() + '</p>';
-    }
-    this.infowindow.setContent(str);
 };
 
 /**
@@ -341,6 +305,7 @@ ko.bindingHandlers.selectAndFocus = {
  */
 var ViewModel = function() {
     var self = this;
+    self.infoWindow = new google.maps.InfoWindow();
 
     self.places = ko.observableArray(model.places);
 
@@ -372,11 +337,6 @@ var ViewModel = function() {
             // input = document.getElementById('pac-input'),
 
         google.maps.event.addListener(map, 'click', function(e) {
-            // An infowindow might be open when for example a place in
-            // the marker list was clicked. Unless we close that window
-            // here, it would remain open (unless manually closed later) in
-            // addition to the window pertaining to the newly set marker.
-            self.closeInfoWindows();
             self.addPlace(geocoder, e.latLng, map);
         });
 
@@ -428,7 +388,7 @@ var ViewModel = function() {
 
         $(".tt-input").keyup(function(e) {
             // Hide info window that might still show after filtering for a previous place
-            self.closeInfoWindows();
+            self.closeInfoWindow();
 
             var searchFieldText = $(".tt-input").val();
             // console.log(e.type + " on " + e.target.id);
@@ -448,6 +408,41 @@ var ViewModel = function() {
                 self.panToMatchIfUnique();
             }
         });
+    };
+
+    // TODO: It would be much (!) nicer to keep this HTML in index.html.
+    // Can I use knockout templates? (I think I would have to, because
+    // there might be multiple info windows shown. But how do I bind to
+    // the various places?
+    // var str='<div data-bind="template: { name: \'infowindow-template\', data: place }"></div>';
+    //
+    // TODO: In addition, anytime an observable changes, I manually have to
+    // call (ie not forget to call!) setInfowindowContent. It is not possible
+    // to make the infowindow HTML a ko.computed() and assign it to the
+    // content of the infowindow - Google expects a String and would return an
+    // error.
+    self.setInfowindowContent = function(place) {
+        var str = '<h3>'+place.title() + '</h3>' +
+            '<div>'+place.formatted_address + '</div>';
+
+        if (place.venues().length > 0) {
+            str += '<h4>In the vicinity</h4>';
+            str += '<ul>';
+            place.venues().forEach(function(v, index, array) {
+                str += '<li>' + v.name;
+                var categoryStr = v.categories.map(function(c) {
+                    return c.name;
+                }).join();
+                if (categoryStr !== "") {
+                    str += " (" + categoryStr + ")";
+                }
+                str += "</li>";
+            });
+            str += "</ul>";
+        } else /* silently ignore missing information, but show a warning */ if (place.fourSquareLookupError()) {
+            str += '<p>' + place.fourSquareLookupError() + '</p>';
+        }
+        self.infoWindow.setContent(str);
     };
 
     self.destroyPlace = function(place,e) {
@@ -481,8 +476,8 @@ var ViewModel = function() {
         }
 
         // The infowindow has to be set in all cases since it is not a KO
-        // observable. TODO: Should I make it one? Why? Why not?
-        place.setInfowindowContent();
+        // observable. TODO: Should I make it an observable? Why? Why not?
+        self.setInfowindowContent(place);
 
         if (!trimmedTitle) {
             this.destroyPlace(place);
@@ -521,7 +516,7 @@ var ViewModel = function() {
                 place.formatted_address = 'unknown (Geocoder failed due to ' + status + ')';
                 place.title('unknown');
             }
-            place.setInfowindowContent();
+            self.setInfowindowContent(place);
         });
 
         var fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
@@ -532,11 +527,11 @@ var ViewModel = function() {
                 if (status === 200) {
                 console.log(results);
                 place.addVenues(results);
-                place.setInfowindowContent();
+                self.setInfowindowContent(place);
             } else {
                 place.fourSquareLookupError("FourSquare call failed with status " + status);
                 console.warn(place.fourSquareLookupError());
-                place.setInfowindowContent();
+                self.setInfowindowContent(place);
             }
         });
 
@@ -548,51 +543,34 @@ var ViewModel = function() {
         var placeDiv = document.getElementById("marker-list");
         placeDiv.scrollTop = placeDiv.scrollHeight;
 
-        // Briefly display the result, then close the window to avoid
-        // having too many open infowindows.
-        place.infowindow.open(gMarker.get('map'), gMarker);
+        // Briefly display the result
+        self.openInfowindow(gMarker);
         window.setTimeout(function() {
-            place.infowindow.close();
+            self.closeInfoWindow();
         }, 1500);
 
         google.maps.event.addListener(gMarker,'click',function() {
             map.panTo(gMarker.getPosition());
-            // Commenting out infowindow.open for now.
-            // Rationale: Opening the window on click conflicts with closing it on
-            // mouseout.  When clicking on a marker, the infowindow will open
-            // briefly, but panning to the marker immediately results in a mouseout
-            // event.
-            //
-            // I could use a boolean to only trigger the windows close in mouseout
-            // when the window was opened with a mouseover, but I am not sure whether
-            // that behavior remains intuitive.
-            //
-            // In this context, also take into account the Best Practices Tip from
-            // https://developers.google.com/maps/documentation/javascript/infowindows:
-            // For the best user experience, only one info window should be open on
-            // the map at any one time. Multiple info windows make the map appear
-            // cluttered
-            //
-            // infowindow.open(gMarker.get('map'), gMarker);
         });
 
         google.maps.event.addListener(gMarker,'mouseover',function() {
-            // An infowindow might me open after a typeahead search, that has to be closed
-            self.closeInfoWindows();
-
-            place.infowindow.open(gMarker.get('map'), gMarker);
-        });
-
-        google.maps.event.addListener(gMarker,'mouseout',function() {
-            place.infowindow.close(gMarker.get('map'), gMarker);
+            self.openInfowindow(gMarker);
         });
     };
 
-    self.closeInfoWindows = function() {
-        // Close any open infowindows. Actually, it should at most one be open.
-        self.places().forEach(function (currentValue, index, array) {
-            currentValue.infowindow.close();
-        });
+    self.placeForMarker = function(gMarker) {
+        return self.places().filter(function (place) {
+            return place.marker === gMarker;
+        })[0];
+    };
+
+    self.openInfowindow = function(gMarker) {
+        self.setInfowindowContent(self.placeForMarker(gMarker));
+        self.infoWindow.open(gMarker.get('map'), gMarker);
+    };
+
+    self.closeInfoWindow = function() {
+        self.infoWindow.close();
     };
 
     /* showMarker is executed when the user single-clicks on an entry in
@@ -601,8 +579,7 @@ var ViewModel = function() {
     self.showPlace = function(place) {
         var gMarker = place.marker;
         gMarker.getMap().panTo(gMarker.getPosition());
-        self.closeInfoWindows();
-        place.infowindow.open(gMarker.get('map'), gMarker);
+        self.openInfowindow(gMarker);
     };
 
     self.initialize();
