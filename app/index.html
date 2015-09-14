@@ -74,7 +74,8 @@
         </ul>
       </div>
       <!-- ko ifnot: venues().length > 0 -->
-        <!-- ko if: fourSquareLookupError() -->/* silently ignore missing information, but show a warning */
+      <!-- ko if: fourSquareLookupError() -->
+        <!-- silently ignore missing information, but show a warning -->
         <p data-bind="text: fourSquareLookupError()"></p>
         <!-- /ko -->
       <!-- /ko -->
@@ -95,6 +96,7 @@
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
 <!-- endbuild -->
+    <script src="js/store.min.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

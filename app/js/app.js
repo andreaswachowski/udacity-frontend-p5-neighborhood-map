@@ -138,8 +138,8 @@ var Place = function(position) {
     this.id = Place.getId(); // the id is used to synchronize places with mapMarkers
     this.title = ko.observable("");
     this.position = {
-        lat: position.lat(),
-        lng: position.lng()
+        lat: position && position.lat(),
+        lng: position && position.lng()
     };
     this.formatted_address = "";
     this.street_number = "";
@@ -476,11 +476,14 @@ var ViewModel = function() {
                     i--;
                 }
             }
+
+            self.storePlaces();
         });
         // Is valueHasMutated necessary? It is shown in http://jsfiddle.net/qtzmz/, but
         // we don't modify self.places, but self.mapMarkers, which is not an observable
         // self.places.valueHasMutated();
 
+        self.loadPlaces();
 
         google.maps.event.addListener(map, 'click', function(e) {
             self.addPlace(geocoder, e.latLng, map);
@@ -570,6 +573,8 @@ var ViewModel = function() {
         if (!trimmedTitle) {
             this.destroyPlace(place);
         }
+
+        self.storePlaces();
     }.bind(this); // ensure that "this" is always this view model
 
     // cancel editing a marker and revert it to the previous content
@@ -603,6 +608,7 @@ var ViewModel = function() {
                 place.formatted_address = 'unknown (Geocoder failed due to ' + status + ')';
                 place.title('unknown');
             }
+            self.storePlaces();
             self.setInfowindowContent(place);
         });
 
@@ -613,6 +619,7 @@ var ViewModel = function() {
             function(results, status) {
                 if (status === 200) {
                 place.addVenues(results);
+                self.storePlaces();
                 self.setInfowindowContent(place);
             } else {
                 place.fourSquareLookupError("FourSquare call failed with status " + status);
@@ -641,6 +648,32 @@ var ViewModel = function() {
         }
     };
 
+    self.loadPlaces = function() {
+        if (store.enabled) {
+            var placeStorage = store.get("places");
+            if (placeStorage) {
+                var placeArray = JSON.parse(placeStorage);
+                placeArray.forEach(function (p) {
+                    var place = new Place();
+                    place.id = p.id;
+                    place.title(p.title);
+                    place.position = p.position;
+                    place.formatted_address = p.formatted_address;
+                    place.street_number = p.street_number;
+                    place.street_name = p.street_name;
+                    place.venues(p.venues);
+                    self.places.push(place);
+                });
+            }
+        }
+    };
+
+    self.storePlaces = function() {
+        if (store.enabled) {
+            // http://knockoutjs.com/documentation/json-data.html
+            store.set("places",ko.toJSON(self.places));
+        }
+    };
 
     self.bounceMarker = function(gMarker) {
         gMarker.setAnimation(google.maps.Animation.BOUNCE);
