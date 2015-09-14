@@ -510,7 +510,6 @@ var ViewModel = function() {
             self.closeInfoWindow();
 
             var searchFieldText = $(".tt-input").val();
-            // console.log(e.type + " on " + e.target.id);
             if (searchFieldText === "") {
                 $(".searchclear").addClass("hidden");
             } else {
@@ -612,7 +611,6 @@ var ViewModel = function() {
             /* limit results to */ 3,
             function(results, status) {
                 if (status === 200) {
-                console.log(results);
                 place.addVenues(results);
                 self.setInfowindowContent(place);
             } else {
