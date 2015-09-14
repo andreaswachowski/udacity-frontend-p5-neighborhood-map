@@ -335,6 +335,34 @@ var ViewModel = function() {
         });
     });
 
+    self.uniqueMatch = function(searchFieldText) {
+        // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
+        // we want to change it, we have to do it in two places. Merge this.
+        var substrRegex = new RegExp(searchFieldText, 'i');
+        var matchingPlaces = model.places.filter(function(e) {
+            return substrRegex.test(e.title());
+        });
+        return matchingPlaces.length === 1 ? matchingPlaces[0] : false;
+    };
+
+    self.panToMatchIfUnique = function() {
+        var searchFieldText = $(".tt-input").val();
+        var uniquePlace = self.uniqueMatch(searchFieldText);
+        if (uniquePlace) {
+            self.showPlace(uniquePlace);
+            // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
+            // will not lead to confusion
+            $(".searchclear").addClass("hidden");
+            $(".typeahead").typeahead("val", "");
+            $(".tt-input").blur().val("");
+            $(".btn").addClass("hidden");
+            self.query(""); // Make sure all markers are visible again
+        }
+        // else ignore
+        // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
+        // to show the user that too many places are selected
+    };
+
     self.initialize = function() {
         var mapOptions = {
                 center: model.map.center,
@@ -352,34 +380,6 @@ var ViewModel = function() {
             self.addPlace(geocoder, e.latLng, map);
         });
 
-
-        self.uniqueMatch = function(searchFieldText) {
-            // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
-            // we want to change it, we have to do it in two places. Merge this.
-            var substrRegex = new RegExp(searchFieldText, 'i');
-            var matchingPlaces = model.places.filter(function(e) {
-                return substrRegex.test(e.title());
-            });
-            return matchingPlaces.length === 1 ? matchingPlaces[0] : false;
-        }
-
-        self.panToMatchIfUnique = function() {
-            var searchFieldText = $(".tt-input").val();
-            var uniquePlace = self.uniqueMatch(searchFieldText);
-            if (uniquePlace) {
-                self.showPlace(uniquePlace);
-                // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
-                // will not lead to confusion
-                $(".searchclear").addClass("hidden");
-                $(".typeahead").typeahead("val", "");
-                $(".tt-input").blur().val("");
-                $(".btn").addClass("hidden");
-                self.query(""); // Make sure all markers are visible again
-            }
-            // else ignore
-            // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
-            // to show the user that too many places are selected
-        };
 
         $(".searchclear").click(function() {
             // TODO(refactor): How can I address the searchclear-elementset implicitly, without having to specify it again?
