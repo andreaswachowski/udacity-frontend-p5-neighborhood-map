@@ -134,7 +134,7 @@ $('.scrollable-dropdown-menu .typeahead').typeahead({
  * @param {Map} map - The map on which a marker for this place shall be added.
  * @param {LatLng} position - The position of the place.
  */
-var Place = function(map,position) {
+var Place = function(position) {
     this.id = Place.getId(); // the id is used to synchronize places with mapMarkers
     this.title = ko.observable("");
     this.position = {
@@ -579,7 +579,7 @@ var ViewModel = function() {
     };
 
     self.addPlace = function(geocoder, position, map) {
-        var place = new Place(map,position),
+        var place = new Place(position),
             positionLiteral = { lat: position.lat(), lng: position.lng() };
 
         // Initialize formatted_address and title
