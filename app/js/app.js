@@ -448,38 +448,39 @@ var ViewModel = function() {
             defaultBounds = new google.maps.LatLngBounds();
             // input = document.getElementById('pac-input'),
 
-            self.places.subscribe(function (places) {
-                // Create reversed hashes by id of markers and mapMarkers
-                var rev1 = {}, rev2 = {};
-                var i;
+        self.places.subscribe(function (places) {
+            // Create reversed hashes by id of markers and mapMarkers
+            var rev1 = {}, rev2 = {};
+            var i;
 
-                for (i = 0; i < places.length; i++) {
-                    rev1[places[i].id] = i;
-                }
-                for (i = 0; i < self.mapMarkers.length; i++) {
-                    rev2[self.mapMarkers[i].id] = i;
-                }
+            for (i = 0; i < places.length; i++) {
+                rev1[places[i].id] = i;
+            }
+            for (i = 0; i < self.mapMarkers.length; i++) {
+                rev2[self.mapMarkers[i].id] = i;
+            }
 
-                // Create new markers
-                for (i = 0; i < places.length; i++) {
-                    if (rev2[places[i].id] === undefined) {
-                        self.mapMarkers.push(self.createMarker(map,places[i]));
-                        rev2[places[i].id] = self.mapMarkers.length-1;
-                    }
+            // Create new markers
+            for (i = 0; i < places.length; i++) {
+                if (rev2[places[i].id] === undefined) {
+                    self.mapMarkers.push(self.createMarker(map,places[i]));
+                    rev2[places[i].id] = self.mapMarkers.length-1;
                 }
+            }
 
-                // Destroy non-existant markers
-                for (i = 0; i < self.mapMarkers.length; i++) {
-                    if (rev1[self.mapMarkers[i].id] === undefined) {
-                        self.destroyMarker(self.mapMarkers[i]);
-                        self.mapMarkers.splice(i,1);
-                        i--;
-                    }
+            // Destroy non-existant markers
+            for (i = 0; i < self.mapMarkers.length; i++) {
+                if (rev1[self.mapMarkers[i].id] === undefined) {
+                    self.destroyMarker(self.mapMarkers[i]);
+                    self.mapMarkers.splice(i,1);
+                    i--;
                 }
-            });
-            // Is valueHasMutated necessary? It is shown in http://jsfiddle.net/qtzmz/, but
-            // we don't modify self.places, but self.mapMarkers, which is not an observable
-            // self.places.valueHasMutated();
+            }
+        });
+        // Is valueHasMutated necessary? It is shown in http://jsfiddle.net/qtzmz/, but
+        // we don't modify self.places, but self.mapMarkers, which is not an observable
+        // self.places.valueHasMutated();
+
 
         google.maps.event.addListener(map, 'click', function(e) {
             self.addPlace(geocoder, e.latLng, map);
