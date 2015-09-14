@@ -20,26 +20,26 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  */
 function loadScript() {
     if (navigator.onLine) {
-        $("nav").removeClass("hidden");
-        $("#map-canvas").removeClass("hidden");
+        $('nav').removeClass('hidden');
+        $('#map-canvas').removeClass('hidden');
 
-        $("#offline-on-load").addClass("hidden");
+        $('#offline-on-load').addClass('hidden');
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
         '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
-        $("nav").addClass("hidden");
-        $("#map-canvas").addClass("hidden");
+        $('nav').addClass('hidden');
+        $('#map-canvas').addClass('hidden');
 
-        $("#offline-on-load").removeClass("hidden");
+        $('#offline-on-load').removeClass('hidden');
         setTimeout(loadScript, 3000);
     }
 }
 
 // See http://stackoverflow.com/questions/10480697/keep-bootstrap-dropdown-open-on-click
-$(document).delegate("ul.dropdown-menu [data-keep-open-on-click]", "click", function(e) {
+$(document).delegate('ul.dropdown-menu [data-keep-open-on-click]', 'click', function(e) {
     e.stopPropagation();
 });
 
@@ -136,14 +136,14 @@ $('.scrollable-dropdown-menu .typeahead').typeahead({
  */
 var Place = function(position) {
     this.id = Place.getId(); // the id is used to synchronize places with mapMarkers
-    this.title = ko.observable("");
+    this.title = ko.observable('');
     this.position = {
         lat: position && position.lat(),
         lng: position && position.lng()
     };
-    this.formatted_address = "";
-    this.street_number = "";
-    this.street_name = "";
+    this.formatted_address = '';
+    this.street_number = '';
+    this.street_name = '';
     this.editing = ko.observable(false);
     this.venues = ko.observableArray();
     this.fourSquareLookupError = ko.observable();
@@ -180,8 +180,8 @@ Place.prototype.addVenues = function(venues,viewModel) {
                 var categoryStr = categories.map(function(c) {
                     return c.name;
                 }).join();
-                if (categoryStr !== "") {
-                    categoryStr = " (" + categoryStr + ")";
+                if (categoryStr !== '') {
+                    categoryStr = ' (' + categoryStr + ')';
                 }
                 return categoryStr;
             })
@@ -199,8 +199,8 @@ Place.prototype.addVenues = function(venues,viewModel) {
  * @param {String} clientSecret - The foursquare API client secret
  */
 var FourSquare = function(clientId, clientSecret) {
-    this.baseUrl = "https://api.foursquare.com/v2";
-    this.apiVersion = "20150824";
+    this.baseUrl = 'https://api.foursquare.com/v2';
+    this.apiVersion = '20150824';
 
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -239,24 +239,24 @@ FourSquare.prototype.searchVenueAtPosition = function(position, limit, callback)
             if(xmlhttp.status == 200) {
                 // TODO From a security viewpoint, I suppose that using
                 // eval() boils down to trusting the FourSquare servers
-                // The API returns an array called "venues"
-                venues = eval("("+xmlhttp.responseText+")").response.venues;
+                // The API returns an array called 'venues'
+                venues = eval('('+xmlhttp.responseText+')').response.venues;
             }
             callback(venues,xmlhttp.status);
         }
     };
 
-    var url = this.baseUrl + "/venues/search?ll=" + position.lat + "," + position.lng +
-        "&limit=" + limit +
+    var url = this.baseUrl + '/venues/search?ll=' + position.lat + ',' + position.lng +
+        '&limit=' + limit +
         this.apiCallPostFix();
-    xmlhttp.open("GET", url, true);
+    xmlhttp.open('GET', url, true);
     xmlhttp.send();
 };
 
 FourSquare.prototype.apiCallPostFix = function() {
-    return "&client_id=" + this.clientId +
-        "&client_secret=" + this.clientSecret +
-        "&v=" + this.apiVersion;
+    return '&client_id=' + this.clientId +
+        '&client_secret=' + this.clientSecret +
+        '&v=' + this.apiVersion;
 };
 
 // The key handling functionality comes straight from TodoMVC's KnockoutJS
@@ -394,17 +394,17 @@ var ViewModel = function() {
     };
 
     self.panToMatchIfUnique = function() {
-        var searchFieldText = $(".tt-input").val();
+        var searchFieldText = $('.tt-input').val();
         var uniquePlace = self.uniqueMatch(searchFieldText);
         if (uniquePlace) {
             self.showPlace(uniquePlace);
             // Clear the text field so subsequent actions, like choosing a marker from the dropdown,
             // will not lead to confusion
-            $(".searchclear").addClass("hidden");
-            $(".typeahead").typeahead("val", "");
-            $(".tt-input").blur().val("");
-            $(".btn").addClass("hidden");
-            self.query(""); // Make sure all markers are visible again
+            $('.searchclear').addClass('hidden');
+            $('.typeahead').typeahead('val', '');
+            $('.tt-input').blur().val('');
+            $('.btn').addClass('hidden');
+            self.query(''); // Make sure all markers are visible again
         }
         // else ignore
         // TODO(feat): This condition could trigger a warning, like a wobble effect or a red flash,
@@ -490,18 +490,18 @@ var ViewModel = function() {
         });
 
 
-        $(".searchclear").click(function() {
+        $('.searchclear').click(function() {
             // TODO(refactor): How can I address the searchclear-elementset implicitly, without having to specify it again?
-            // "this" does not work, neither referring to a passed-in function argument
-            $(".searchclear").addClass("hidden");
-            $(".btn").addClass("hidden");
-            $(".typeahead").typeahead("val", "");
-            $(".tt-input").val("").focus();
+            // 'this' does not work, neither referring to a passed-in function argument
+            $('.searchclear').addClass('hidden');
+            $('.btn').addClass('hidden');
+            $('.typeahead').typeahead('val', '');
+            $('.tt-input').val('').focus();
         });
 
-        $(".btn").click(function(e) {
+        $('.btn').click(function(e) {
             self.panToMatchIfUnique();
-            $(".btn").addClass("hidden");
+            $('.btn').addClass('hidden');
         });
 
         // When an autocomplete result is selected, trigger keyup so that the "Go" button is displayed
@@ -509,20 +509,20 @@ var ViewModel = function() {
             self.panToMatchIfUnique();
         });
 
-        $(".tt-input").keyup(function(e) {
+        $('.tt-input').keyup(function(e) {
             // Hide info window that might still show after filtering for a previous place
             self.closeInfoWindow();
 
-            var searchFieldText = $(".tt-input").val();
-            if (searchFieldText === "") {
-                $(".searchclear").addClass("hidden");
+            var searchFieldText = $('.tt-input').val();
+            if (searchFieldText === '') {
+                $('.searchclear').addClass('hidden');
             } else {
-                $(".searchclear").removeClass("hidden");
+                $('.searchclear').removeClass('hidden');
             }
             if (self.uniqueMatch(searchFieldText)) {
-                $(".btn").removeClass("hidden");
+                $('.btn').removeClass('hidden');
             } else {
-                $(".btn").addClass("hidden");
+                $('.btn').addClass('hidden');
             }
 
             var code = e.which;
@@ -534,7 +534,7 @@ var ViewModel = function() {
 
     self.setInfowindowContent = function(place) {
         self.currentPlace(place);
-        self.infoWindow.setContent($("#infowindow")[0].innerHTML);
+        self.infoWindow.setContent($('#infowindow')[0].innerHTML);
     };
 
     self.destroyPlace = function(place,e) {
@@ -622,7 +622,7 @@ var ViewModel = function() {
                 self.storePlaces();
                 self.setInfowindowContent(place);
             } else {
-                place.fourSquareLookupError("FourSquare call failed with status " + status);
+                place.fourSquareLookupError('FourSquare call failed with status ' + status);
                 console.warn(place.fourSquareLookupError());
                 self.setInfowindowContent(place);
             }
@@ -650,7 +650,7 @@ var ViewModel = function() {
 
     self.loadPlaces = function() {
         if (store.enabled) {
-            var placeStorage = store.get("places");
+            var placeStorage = store.get('places');
             if (placeStorage) {
                 var placeArray = JSON.parse(placeStorage);
                 placeArray.forEach(function (p) {
@@ -671,7 +671,7 @@ var ViewModel = function() {
     self.storePlaces = function() {
         if (store.enabled) {
             // http://knockoutjs.com/documentation/json-data.html
-            store.set("places",ko.toJSON(self.places));
+            store.set('places',ko.toJSON(self.places));
         }
     };
 
@@ -713,12 +713,12 @@ var ViewModel = function() {
 /* See https://developer.mozilla.org/en-US/docs/Online_and_offline_events */
 window.addEventListener('load', function() {
     function updateOnlineStatus(event) {
-        var condition = navigator.onLine ? "online" : "offline";
+        var condition = navigator.onLine ? 'online' : 'offline';
         var status=document.getElementById('connection-lost-warning');
         if (navigator.onLine) {
-            status.classList.add("hidden");
+            status.classList.add('hidden');
         } else {
-            status.classList.remove("hidden");
+            status.classList.remove('hidden');
         }
     }
 
