@@ -135,6 +135,7 @@ $('.scrollable-dropdown-menu .typeahead').typeahead({
  * @param {LatLng} position - The position of the place.
  */
 var Place = function(map,position) {
+    this.id = Place.getId(); // the id is used to synchronize places with mapMarkers
     this.title = ko.observable("");
     this.position = {
         lat: position.lat(),
@@ -144,13 +145,18 @@ var Place = function(map,position) {
     this.street_number = "";
     this.street_name = "";
     this.editing = ko.observable(false);
-    this.marker = new google.maps.Marker({
-        position: position,
-        animation: google.maps.Animation.DROP,
-        map: map
-    });
     this.venues = ko.observableArray();
     this.fourSquareLookupError = ko.observable();
+};
+
+/**
+ * Returns an auto-incrementing ID.
+ *
+ * @see {@link http://javascript.info/tutorial/static-variables-methods-decorators}
+ */
+Place.getId = function() {
+    arguments.callee.count = ++arguments.callee.count || 1;
+    return arguments.callee.count;
 };
 
 /**
@@ -321,7 +327,32 @@ var ViewModel = function() {
     self.places = ko.observableArray(model.places);
     self.currentPlace = ko.observable();
 
+    // To cleanly separate the model (ie places with lat/lng, an address, a title etc.)
+    // from the view (esp. Google markers), the markers are tracked in a separate array,
+    // which is kept in sync with the model via a subscription on self.places (see further down).
+    //
+    // This approach is taken from http://jsfiddle.net/qtzmz/, referenced from
+    // http://stackoverflow.com/questions/16482309/the-simpliest-way-to-subscribe-for-an-observablearray-in-knockoutjs
+    //
+    // In particular, this separation is necessary in order to use localStorage. For once, the space requirements would
+    // increase when storing the full google marker objects.
+    // More importantly, I ran into same-origin-policy problems while attempting to store, because Google is accessed via
+    // HTTPS, and this application may run on HTTP.
+    self.mapMarkers = [];
+
     self.query = ko.observable('');
+
+    self.lookupMarkerFromPlace = function(place) {
+        var i=0;
+        var found=false;
+        var marker;
+        while (!found && i<self.mapMarkers.length) {
+            found = self.mapMarkers[i].id === place.id;
+            if (!found) ++i;
+        }
+        if (found) marker = self.mapMarkers[i];
+        return marker;
+    };
 
     // The general idea stems from JohnMav at https://discussions.udacity.com/t/search-box-filtering/26749
     // more specifically his example at http://codepen.io/JohnMav/pen/OVEzWM
@@ -330,7 +361,24 @@ var ViewModel = function() {
     self.search = ko.computed( function() {
         return ko.utils.arrayFilter(self.places(), function(place) {
             var isMatch = place.title().toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
-            place.marker.setVisible(isMatch);
+
+            var marker = self.lookupMarkerFromPlace(place);
+
+            // The marker will not always be looked up successfully:
+            //
+            // This ko.computed-callback is called after a change to a place, e.g. after a new place is added, and after the
+            // place's geocode results come in. (This is not optimal because this means O(n2) executions of this scope
+            // (with n the number of additions), but due to the small number of places that's neglible.).
+            //
+            // The problem is, this part here is executed *before* self.places's subscription is executed, and the latter is
+            // responsible to keep places and mapMarkers in sync. So at this point, the marker cannot be found yet, and we
+            // hence have to guard against that with an if-statement.
+            // (On the other hand, when the user enters filter queries, the markers are already initialized, and the
+            // visibility will be set without problems.)
+
+            if (marker) {
+                marker.setVisible(isMatch);
+            }
             return isMatch;
         });
     });
@@ -363,6 +411,30 @@ var ViewModel = function() {
         // to show the user that too many places are selected
     };
 
+    self.createMarker = function(map,place) {
+        var gMarker = new google.maps.Marker({
+            id: place.id, // the ids must be equal so that self.places and self.mapMarkers can be synced
+            position: place.position,
+            animation: google.maps.Animation.DROP,
+            map: map
+        });
+
+        google.maps.event.addListener(gMarker,'click',function() {
+            map.panTo(gMarker.getPosition());
+            self.bounceMarker(gMarker);
+        });
+
+        google.maps.event.addListener(gMarker,'mouseover',function() {
+            self.openInfowindow(gMarker);
+        });
+
+        return gMarker;
+    };
+
+    self.destroyMarker = function(marker) {
+        marker.setMap(null); // remove marker from Google Map
+    };
+
     self.initialize = function() {
         var mapOptions = {
                 center: model.map.center,
@@ -375,6 +447,39 @@ var ViewModel = function() {
             geocoder = new google.maps.Geocoder(),
             defaultBounds = new google.maps.LatLngBounds();
             // input = document.getElementById('pac-input'),
+
+            self.places.subscribe(function (places) {
+                // Create reversed hashes by id of markers and mapMarkers
+                var rev1 = {}, rev2 = {};
+                var i;
+
+                for (i = 0; i < places.length; i++) {
+                    rev1[places[i].id] = i;
+                }
+                for (i = 0; i < self.mapMarkers.length; i++) {
+                    rev2[self.mapMarkers[i].id] = i;
+                }
+
+                // Create new markers
+                for (i = 0; i < places.length; i++) {
+                    if (rev2[places[i].id] === undefined) {
+                        self.mapMarkers.push(self.createMarker(map,places[i]));
+                        rev2[places[i].id] = self.mapMarkers.length-1;
+                    }
+                }
+
+                // Destroy non-existant markers
+                for (i = 0; i < self.mapMarkers.length; i++) {
+                    if (rev1[self.mapMarkers[i].id] === undefined) {
+                        self.destroyMarker(self.mapMarkers[i]);
+                        self.mapMarkers.splice(i,1);
+                        i--;
+                    }
+                }
+            });
+            // Is valueHasMutated necessary? It is shown in http://jsfiddle.net/qtzmz/, but
+            // we don't modify self.places, but self.mapMarkers, which is not an observable
+            // self.places.valueHasMutated();
 
         google.maps.event.addListener(map, 'click', function(e) {
             self.addPlace(geocoder, e.latLng, map);
@@ -436,7 +541,6 @@ var ViewModel = function() {
         // Remove the element
         var placesArray = self.places;
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
-        removedPlacesArray[0].marker.setMap(null); // remove marker from Google Map
     };
 
     self.editPlace = function (place) {
@@ -476,7 +580,6 @@ var ViewModel = function() {
 
     self.addPlace = function(geocoder, position, map) {
         var place = new Place(map,position),
-            gMarker = place.marker,
             positionLiteral = { lat: position.lat(), lng: position.lng() };
 
         // Initialize formatted_address and title
@@ -521,27 +624,24 @@ var ViewModel = function() {
 
         self.places.push(place);
 
-        // Scroll to bottom of list. When the list overflows and a
-        // vertical scrollbar appears, this helps understanding that new
-        // places are indeed added.
-        var placeDiv = document.getElementById("marker-list");
-        placeDiv.scrollTop = placeDiv.scrollHeight;
-
-        // Briefly display the result
-        self.openInfowindow(gMarker);
-        window.setTimeout(function() {
-            self.closeInfoWindow();
-        }, 1500);
-
-        google.maps.event.addListener(gMarker,'click',function() {
-            map.panTo(gMarker.getPosition());
-            self.bounceMarker(gMarker);
-        });
-
-        google.maps.event.addListener(gMarker,'mouseover',function() {
-            self.openInfowindow(gMarker);
-        });
+        self.displayInfowindow(place);
     };
+
+    self.displayInfowindow = function(place) {
+        var gMarker = self.lookupMarkerFromPlace(place);
+        if (gMarker) {
+            // Briefly display the result
+            self.openInfowindow(gMarker);
+            window.setTimeout(function() {
+                self.closeInfoWindow();
+            }, 1500);
+
+        } else {
+            // This should never happen
+            console.warn("Marker not found (has the place's subscription already run?), cannot display.");
+        }
+    };
+
 
     self.bounceMarker = function(gMarker) {
         gMarker.setAnimation(google.maps.Animation.BOUNCE);
@@ -550,14 +650,14 @@ var ViewModel = function() {
         }, 1400); // http://stackoverflow.com/questions/7339200/bounce-a-pin-in-google-maps-once
     };
 
-    self.placeForMarker = function(gMarker) {
+    self.lookupPlaceFromMarker = function(gMarker) {
         return self.places().filter(function (place) {
-            return place.marker === gMarker;
+            return place.id === gMarker.id;
         })[0];
     };
 
     self.openInfowindow = function(gMarker) {
-        self.setInfowindowContent(self.placeForMarker(gMarker));
+        self.setInfowindowContent(self.lookupPlaceFromMarker(gMarker));
         self.infoWindow.open(gMarker.get('map'), gMarker);
     };
 
@@ -569,7 +669,7 @@ var ViewModel = function() {
      * the marker list
      */
     self.showPlace = function(place) {
-        var gMarker = place.marker;
+        var gMarker = self.lookupMarkerFromPlace(place);
         gMarker.getMap().panTo(gMarker.getPosition());
         self.openInfowindow(gMarker);
         self.bounceMarker(gMarker);
