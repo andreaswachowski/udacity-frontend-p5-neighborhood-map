@@ -536,6 +536,14 @@ var ViewModel = function() {
         $("#menu-toggle").click(function(e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
+
+            // When the sidebar disappears, the map's right margin might contain unloaded tiles.
+            // We force loading them by triggering 'resize'
+            // The only important thing to remember is to trigger only after the CSS transition
+            // has finished (and hence we use 500ms, exactly what is specified for the transition)
+            window.setTimeout(function() {
+                google.maps.event.trigger(map, 'resize');
+            }, 500);
         });
     };
 
