@@ -60,7 +60,9 @@
       </div>
     </div> <!-- wrapper -->
 
-    <div id="infowindow" data-bind="with: currentPlace">
+    <!-- Use "position: fixed" for the infowindow so that it hides behind the other elements. Otherwise, it would
+      be appended below them, and a vertical scrollbar would appear at the map's right margin.  -->
+    <div id="infowindow" class="fixed" data-bind="with: currentPlace">
       <h3 data-bind="text: title"></h3>
       <div data-bind="text: formatted_address"></div>
       <div data-bind="if: venues().length > 0">
