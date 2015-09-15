@@ -497,6 +497,7 @@ var ViewModel = function() {
             $('#go').addClass('hidden');
             $('.typeahead').typeahead('val', '');
             $('.tt-input').val('').focus();
+            self.query(''); // Trigger self.search, so sidebar shows all places again
         });
 
         $('#go').click(function(e) {
