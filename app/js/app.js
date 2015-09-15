@@ -555,9 +555,6 @@ var ViewModel = function() {
     };
 
     self.destroyPlace = function(place,e) {
-        // Stop the event propagation to avoid closing the drop down, from which the destroy action was triggered.
-        e.stopPropagation();
-
         // Remove the element
         var placesArray = self.places;
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
@@ -609,7 +606,7 @@ var ViewModel = function() {
         self.setInfowindowContent(place);
 
         if (!trimmedTitle) {
-            this.destroyPlace(place);
+            self.destroyPlace(place);
         }
 
         self.storePlaces();
