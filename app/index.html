@@ -39,6 +39,7 @@
           <li data-bind="css: { editing: editing }">
             <div class="view">
               <label data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+              <button class="explore-btn" data-bind="click: $root.explorePlace"></button>
               <button class="edit-btn" data-bind="click: $root.editPlace"></button>
               <!-- Clicking the destroy button shall not bubble, thereby avoiding closing the dropdown, but the
                 data-keep-open-on-click approach is not working, because Knockout immediately triggers destroyPlace,

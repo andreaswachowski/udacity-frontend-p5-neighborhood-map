@@ -115,6 +115,7 @@ button {
 }
 
 .sidebar-nav li .destroy,
+.sidebar-nav li .explore-btn,
 .sidebar-nav li .edit-btn {
   display: none;
   position: absolute;
@@ -125,6 +126,10 @@ button {
   font-size: 22px;
   margin: auto 0;
   transition: all 0.2s;
+}
+
+.sidebar-nav li .explore-btn {
+  right: 90px;
 }
 
 .sidebar-nav li .edit-btn {
@@ -143,14 +148,21 @@ button {
 }
 
 .sidebar-nav li:hover .destroy,
+.sidebar-nav li:hover .explore-btn,
 .sidebar-nav li:hover .edit-btn {
   display: block;
 }
 
 .sidebar-nav li .destroy:hover,
+.sidebar-nav li .explore-btn:hover,
 .sidebar-nav li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
   transform: scale(1.3);
+}
+
+
+.sidebar-nav li .explore-btn:after {
+  content: "🔎";
 }
 
 .sidebar-nav li .edit-btn:after {
@@ -292,6 +304,7 @@ button {
   /* Make sure the edit/destroy buttons are shown on mobile
    */
   .sidebar-nav li .destroy,
+  .sidebar-nav li .explore-btn,
   .sidebar-nav li .edit-btn {
     display: block;
   }

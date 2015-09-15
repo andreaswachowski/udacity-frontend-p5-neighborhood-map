@@ -322,6 +322,9 @@ var ViewModel = function() {
     self.places = ko.observableArray(model.places);
     self.currentPlace = ko.observable();
 
+    // if API credentials available, fourSquare will be initialized in self.initialize
+    self.fourSquare;
+
     // To cleanly separate the model (ie places with lat/lng, an address, a title etc.)
     // from the view (esp. Google markers), the markers are tracked in a separate array,
     // which is kept in sync with the model via a subscription on self.places (see further down).
@@ -443,6 +446,10 @@ var ViewModel = function() {
             defaultBounds = new google.maps.LatLngBounds();
             // input = document.getElementById('pac-input'),
 
+        if (FOURSQUARE_CLIENT_ID && FOURSQUARE_CLIENT_ID) {
+            self.fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
+        }
+
         self.places.subscribe(function (places) {
             // Create reversed hashes by id of markers and mapMarkers
             var rev1 = {}, rev2 = {};
@@ -556,6 +563,27 @@ var ViewModel = function() {
         var removedPlacesArray = placesArray.splice(placesArray.indexOf(place),1);
     };
 
+    self.explorePlace = function (place) {
+        // In case another place is currently shown
+        self.showPlace(place);
+
+        if (self.fourSquare) {
+            self.fourSquare.searchVenueAtPosition(place.position,
+                /* limit results to */ 3,
+                function(results, status) {
+                    if (status === 200) {
+                    place.addVenues(results);
+                    self.storePlaces();
+                    self.setInfowindowContent(place);
+                } else {
+                    place.fourSquareLookupError('FourSquare call failed with status ' + status);
+                    console.warn(place.fourSquareLookupError());
+                    self.setInfowindowContent(place);
+                }
+            });
+        }
+    };
+
     self.editPlace = function (place) {
         place.editing(true);
         // TODO: Save *all* place information, not just the title
@@ -594,8 +622,7 @@ var ViewModel = function() {
     };
 
     self.addPlace = function(geocoder, position, map) {
-        var place = new Place(position),
-            positionLiteral = { lat: position.lat(), lng: position.lng() };
+        var place = new Place(position);
 
         // Initialize formatted_address and title
         // See example at https://developers.google.com/maps/documentation/javascript/geocoding
@@ -620,22 +647,6 @@ var ViewModel = function() {
             }
             self.storePlaces();
             self.setInfowindowContent(place);
-        });
-
-        var fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
-
-        fourSquare.searchVenueAtPosition(positionLiteral,
-            /* limit results to */ 3,
-            function(results, status) {
-                if (status === 200) {
-                place.addVenues(results);
-                self.storePlaces();
-                self.setInfowindowContent(place);
-            } else {
-                place.fourSquareLookupError('FourSquare call failed with status ' + status);
-                console.warn(place.fourSquareLookupError());
-                self.setInfowindowContent(place);
-            }
         });
 
         self.places.push(place);
