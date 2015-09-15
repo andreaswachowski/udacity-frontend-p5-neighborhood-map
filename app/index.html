@@ -15,51 +15,50 @@
   <body>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
+          <button type="button" id="menu-toggle" class="navbar-left navbar-toggle btn btn-default">
+            <span class="sr-only">Toggle places</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <form class="navbar-form navbar-left" action="#" onsubmit="return false;" role="search">
             <div class="scrollable-dropdown-menu">
               <div class="btn-group">
                 <input class="form-control typeahead" type="search" placeholder="Filter places" data-bind="textInput: query, valueUpdate: 'keyup'">
                 <span class="searchclear glyphicon glyphicon-remove-circle hidden"></span>
               </div>
-              <button class="btn btn-default hidden" type="button">Go</button>
+              <button id="go" class="btn btn-default hidden" type="button">Go</button>
             </div>
           </form>
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Places <span class="caret"></span></a>
-              <ul id="marker-list" class="dropdown-menu" data-bind="foreach: search()">
-                <li data-bind="css: { editing: editing }">
-                  <div class="view">
-                    <label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
-                    <button class="edit-btn" data-bind="click: $root.editPlace" data-keep-open-on-click></button>
-                    <!-- Clicking the destroy button shall not bubble, thereby avoiding closing the dropdown, but the
-                      data-keep-open-on-click approach is not working, because Knockout immediately triggers destroyPlace,
-                      without jQuery having the chance to catch the event. Hence using Knockouts event-binding to stop
-                      propagation.  -->
-                    <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
-                  </div>
-                  <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-    <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
-    <div id="map-canvas" class="fill-screen"></div>
-    <div id="offline-on-load" class="white-on-red-warning hidden">The browser is offline. Connect to the Internet and wait
-        for the page to reload.</div>
+    <div id="wrapper" class="wrapper">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper" class="sidebar-wrapper">
+        <ul id="marker-list" class="sidebar-nav" data-bind="foreach: search()">
+          <li data-bind="css: { editing: editing }">
+            <div class="view">
+              <label class="marker" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+              <button class="edit-btn" data-bind="click: $root.editPlace" data-keep-open-on-click></button>
+              <!-- Clicking the destroy button shall not bubble, thereby avoiding closing the dropdown, but the
+                data-keep-open-on-click approach is not working, because Knockout immediately triggers destroyPlace,
+                without jQuery having the chance to catch the event. Hence using Knockouts event-binding to stop
+                propagation.  -->
+                <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
+            </div>
+            <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
+          </li>
+        </ul>
+      </div>
+      <!-- /#sidebar-wrapper -->
+
+      <div class="sidebar-page-content-wrapper">
+        <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
+        <div id="map-canvas" class="fill-screen"></div>
+        <div id="offline-on-load" class="white-on-red-warning hidden">The browser is offline. Connect to the Internet and wait
+          for the page to reload.</div>
+      </div>
+    </div> <!-- wrapper -->
 
     <div id="infowindow" data-bind="with: currentPlace">
       <h3 data-bind="text: title"></h3>
@@ -75,9 +74,9 @@
       </div>
       <!-- ko ifnot: venues().length > 0 -->
       <!-- ko if: fourSquareLookupError() -->
-        <!-- silently ignore missing information, but show a warning -->
-        <p data-bind="text: fourSquareLookupError()"></p>
-        <!-- /ko -->
+      <!-- silently ignore missing information, but show a warning -->
+      <p data-bind="text: fourSquareLookupError()"></p>
+      <!-- /ko -->
       <!-- /ko -->
     </div>
 
@@ -89,10 +88,10 @@
     <!-- endbower -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/button.js"></script>
-    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
+    <!-- <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script> -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
-    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
+    <!-- <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script> -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
 <!-- endbuild -->

@@ -403,7 +403,7 @@ var ViewModel = function() {
             $('.searchclear').addClass('hidden');
             $('.typeahead').typeahead('val', '');
             $('.tt-input').blur().val('');
-            $('.btn').addClass('hidden');
+            $('#go').addClass('hidden');
             self.query(''); // Make sure all markers are visible again
         }
         // else ignore
@@ -494,14 +494,14 @@ var ViewModel = function() {
             // TODO(refactor): How can I address the searchclear-elementset implicitly, without having to specify it again?
             // 'this' does not work, neither referring to a passed-in function argument
             $('.searchclear').addClass('hidden');
-            $('.btn').addClass('hidden');
+            $('#go').addClass('hidden');
             $('.typeahead').typeahead('val', '');
             $('.tt-input').val('').focus();
         });
 
-        $('.btn').click(function(e) {
+        $('#go').click(function(e) {
             self.panToMatchIfUnique();
-            $('.btn').addClass('hidden');
+            $('#go').addClass('hidden');
         });
 
         // When an autocomplete result is selected, trigger keyup so that the "Go" button is displayed
@@ -520,15 +520,21 @@ var ViewModel = function() {
                 $('.searchclear').removeClass('hidden');
             }
             if (self.uniqueMatch(searchFieldText)) {
-                $('.btn').removeClass('hidden');
+                $('#go').removeClass('hidden');
             } else {
-                $('.btn').addClass('hidden');
+                $('#go').addClass('hidden');
             }
 
             var code = e.which;
             if (code === ENTER_KEY) {
                 self.panToMatchIfUnique();
             }
+        });
+
+        // Functionality to toggle the sidebar
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
         });
     };
 

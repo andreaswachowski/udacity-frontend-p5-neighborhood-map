@@ -1,3 +1,5 @@
+@import "bootstrap_variables";
+
 /* TODO(refactor): Use SCSS instead of CSS, and refer to Bootstrap's $navbar-height instead of
  * hardcoding "50px" multiple times.
  * In the same vein,
@@ -41,19 +43,72 @@ button {
   vertical-align: baseline;
 }
 
-.dropdown-menu li {
+/* Sidebar Styles
+ * Derived from
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+.wrapper {
+  padding-left: 0;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  /* Use all space except that taken up by the navbar for this element.
+   * The navbar has a min-height of 50px, plus a border of 1px
+   * TODO: How can I solve this without relying on knowing the navbar height?
+   */
+  height: calc(100% - 50px - 2px); /* for google maps */
+}
+
+.wrapper.toggled {
+  padding-left: 300px;
+}
+
+.sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 300px;
+  width: 0;
+  height: calc(100% - 50px - 2px); /* for google maps */
+  margin-left: -300px;
+  overflow-y: auto;
+  background: #FFF;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.wrapper.toggled .sidebar-wrapper {
+  width: 300px;
+}
+
+.sidebar-nav {
+  position: absolute;
+  background-color: #FFF;
+  top: 0;
+  width: 300px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-nav li {
   position: relative; /* position relative ensures that the buttons appear next to the dropdown entry */
   height: 48px;
   min-width: 300px;
 }
 
-.dropdown-menu li label {
+.sidebar-nav li label {
   display: block;
   padding: 1em;
 }
 
-.dropdown-menu li .destroy,
-.dropdown-menu li .edit-btn {
+.sidebar-nav li .destroy,
+.sidebar-nav li .edit-btn {
   display: none;
   position: absolute;
   top: 0;
@@ -65,37 +120,37 @@ button {
   transition: all 0.2s;
 }
 
-.dropdown-menu li .edit-btn {
+.sidebar-nav li .edit-btn {
   right: 48px;
 }
 
-.dropdown-menu li .destroy {
+.sidebar-nav li .destroy {
   /* Some space needed to the right, so when the button size increases
    * upon hovering no horizontal scrollbar appears for the menu:
    */
   right: 6px;
 }
 
-.dropdown-menu li:hover label {
+.sidebar-nav li:hover label {
   padding-right: 96px; /* Space depends on size of buttons to the right */
 }
 
-.dropdown-menu li:hover .destroy,
-.dropdown-menu li:hover .edit-btn {
+.sidebar-nav li:hover .destroy,
+.sidebar-nav li:hover .edit-btn {
   display: block;
 }
 
-.dropdown-menu li .destroy:hover,
-.dropdown-menu li .edit-btn:hover {
+.sidebar-nav li .destroy:hover,
+.sidebar-nav li .edit-btn:hover {
   text-shadow: 0 0 1px #000, 0 0 10px rgba(199, 107, 107, 0.8);
   transform: scale(1.3);
 }
 
-.dropdown-menu li .edit-btn:after {
+.sidebar-nav li .edit-btn:after {
   content: "✎";
 }
 
-.dropdown-menu li .destroy:after {
+.sidebar-nav li .destroy:after {
   content: "✖";
 }
 
@@ -106,11 +161,11 @@ button {
   padding: 0;
 }
 
-.dropdown-menu li .edit {
+.sidebar-nav li .edit {
   display: none;
 }
 
-.dropdown-menu li.editing .edit {
+.sidebar-nav li.editing .edit {
   display: block;
   padding: 1em;
   margin: 0;
@@ -124,7 +179,7 @@ button {
   box-sizing: border-box;
 }
 
-.dropdown-menu li.editing .view {
+.sidebar-nav li.editing .view {
   display: none;
 }
 
@@ -246,11 +301,8 @@ button {
 }
 
 .fill-screen {
-  /* Use all space except that taken up by the navbar for this element.
-   * The navbar has a min-height of 50px
-   * TODO: How can I solve this without relying on knowing the navbar height?
-   */
-  height: calc(100% - 50px);
+  height: 100%;
+  width: 100%;
 }
 
 .hidden {
@@ -278,7 +330,7 @@ button {
  * control the dropdown visibility with the dropdown
  * events.
  */
-@media (max-width: 768px) {
+@media (max-width: $grid-float-breakpoint) {
   .navbar-nav .force-open .dropdown-menu {
     position: static;
     float: none;
@@ -392,8 +444,8 @@ button {
 @media (max-width: 768px) {
   /* Make sure the edit/destroy buttons are shown on mobile
    */
-  .dropdown-menu li .destroy,
-  .dropdown-menu li .edit-btn {
+  .sidebar-nav li .destroy,
+  .sidebar-nav li .edit-btn {
     display: block;
   }
 
@@ -415,7 +467,7 @@ button {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: $grid-float-breakpoint + 1) {
   .marker-list {
     float: left;
     width: 384px; /* keep it at 80% of 480px. TODO: Use box-sizing: border-box for maintainability */
@@ -449,3 +501,52 @@ only screen and (-webkit-device-pixel-ratio: 1)
   }
 }
 
+.sidebar-page-content-wrapper {
+  width: 100%;
+  height: 100%; /* for google maps */
+  position: absolute;
+}
+
+.wrapper.toggled .sidebar-page-content-wrapper {
+  position: absolute;
+  margin-right: -300px;
+}
+
+// Intentionally use a hardcoded breakpoint instead of $grid-float-breakpoint (which is 0
+// to allow working with the navbar-toggle)
+@media(min-width: 768px) {
+  .wrapper {
+    padding-left: 300px;
+  }
+
+  .wrapper.toggled {
+    padding-left: 0;
+  }
+
+  .sidebar-wrapper {
+    width: 300px;
+  }
+
+  .wrapper.toggled .sidebar-wrapper {
+    width: 0;
+  }
+
+  .sidebar-page-content-wrapper {
+    position: relative;
+  }
+
+  .wrapper.toggled .sidebar-page-content-wrapper {
+    position: relative;
+    margin-right: 0;
+  }
+}
+
+/* The navbar contains only the side bar toggle and the search textfield, so we don't need it to collapse.
+ * The grid-float-breakpoint has therefore been set to 0.
+ *
+ * But the side bar toggle is the Hamburger icon styled by .navbar-toggle, which would be invisible in an uncollapsed
+ * navbar. So we need to force its display to 'block':
+ */
+.navbar-toggle {
+  display: block;
+}
