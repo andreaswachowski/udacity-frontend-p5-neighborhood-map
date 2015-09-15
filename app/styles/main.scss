@@ -295,16 +295,6 @@ button {
   .sidebar-nav li .edit-btn {
     display: block;
   }
-
-  /* In the collapsed view, without removing the top margin, there would be
-   * an ugly double line between the Hamburger icon row and the filter row.
-   * Further, we must only remove the margin in the collapsed view, because
-   * otherwise the filter textfield would not be vertically centered in the
-   * navbar anymore.
-   */
-  .navbar-form {
-    margin-top: 0;
-  }
 }
 
 /* Use at least 16px for the filter search box to avoid auto zooming on ios devices
