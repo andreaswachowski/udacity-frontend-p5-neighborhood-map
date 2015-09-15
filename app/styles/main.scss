@@ -347,6 +347,18 @@ only screen and (-webkit-device-pixel-ratio: 1)
 
 // Intentionally use a hardcoded breakpoint instead of $grid-float-breakpoint (which is 0
 // to allow working with the navbar-toggle)
+@media(max-width: 768px) {
+  .container-fluid {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  // Make the navbar small as possible to prevent it extending over two lines
+  .navbar-form {
+    padding-left: 5px;
+  }
+}
+
 @media(min-width: 768px) {
   .wrapper {
     padding-left: 300px;
