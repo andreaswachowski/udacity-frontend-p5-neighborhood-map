@@ -382,4 +382,5 @@ only screen and (-webkit-device-pixel-ratio: 1)
  */
 .navbar-toggle {
   display: block;
+  margin-right: 0; // otherwise too much room to the search textfield
 }
