@@ -673,7 +673,6 @@ var ViewModel = function() {
                 var placeArray = JSON.parse(placeStorage);
                 placeArray.forEach(function (p) {
                     var place = new Place();
-                    place.id = p.id;
                     place.title(p.title);
                     place.position = p.position;
                     place.formatted_address = p.formatted_address;
