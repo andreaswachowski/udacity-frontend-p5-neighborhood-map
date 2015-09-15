@@ -38,11 +38,6 @@ function loadScript() {
     }
 }
 
-// See http://stackoverflow.com/questions/10480697/keep-bootstrap-dropdown-open-on-click
-$(document).delegate('ul.dropdown-menu [data-keep-open-on-click]', 'click', function(e) {
-    e.stopPropagation();
-});
-
 /**
  * Initializes the view model. Called from loadScript().
  */
@@ -712,9 +707,6 @@ var ViewModel = function() {
         self.infoWindow.close();
     };
 
-    /* showMarker is executed when the user single-clicks on an entry in
-     * the marker list
-     */
     self.showPlace = function(place) {
         var gMarker = self.lookupMarkerFromPlace(place);
         gMarker.getMap().panTo(gMarker.getPosition());
