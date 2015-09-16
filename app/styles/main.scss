@@ -1,10 +1,15 @@
 @import "bootstrap_variables";
 
-/* TODO(refactor): Use SCSS instead of CSS, and refer to Bootstrap's $navbar-height instead of
- * hardcoding "50px" multiple times.
- * In the same vein,
+/* TODO(refactor):
+ * Start to use BEM or similar naming convention to avoid specificity spikes
+ * Order selectors by specificity
+ * Cf. http://csswizardry.com/2014/10/the-specificity-graph/
+ * https://www.youtube.com/watch?v=1OKZOV-iLj4&hd=1
+ *
+ * TODO(refactor): Use SCSS variables
+ * - refer to Bootstrap's $navbar-height instead of hardcoding "50px" multiple times.
  * - initialize $navbar-margin-bottom to 0 instead of setting the margin here in CSS
- * - use $grid-float-breakpoint(+1) for the @media widths
+ * - use $grid-float-breakpoint(+1) for the @media widths (but careful, currently that value is set to 0)
  */
 
 /* See https://developers.google.com/maps/documentation/javascript/tutorial
@@ -38,8 +43,41 @@ button {
   display: none;
 }
 
+/* See https://css-tricks.com/almanac/properties/t/text-overflow/ */
+.ellipsis {
+  text-overflow: ellipsis;
+
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .navbar {
   margin-bottom: 0;
+}
+
+.accordion-btn::after {
+  content: "▶";
+}
+
+.favorite-btn::after {
+  content: "★";
+}
+
+.accordion-btn.opened::after {
+  content: "▼";
+}
+
+.explore-btn:after {
+  content: "🔎";
+}
+
+.edit-btn:after {
+  content: "✎";
+}
+
+.destroy-btn:after {
+  content: "✖";
 }
 
 /* Sidebar Styles
@@ -93,15 +131,6 @@ button {
   width: 300px;
 }
 
-/* See https://css-tricks.com/almanac/properties/t/text-overflow/ */
-.ellipsis {
-  text-overflow: ellipsis;
-
-  /* Required for text-overflow to do anything */
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 .sidebar-nav {
   position: absolute;
   background-color: #FFF;
@@ -126,7 +155,7 @@ button {
   padding-left: 0;
 }
 
-.sidebar-nav li .destroy,
+.sidebar-nav li .destroy-btn,
 .sidebar-nav li .explore-btn,
 .sidebar-nav li .accordion-btn,
 .sidebar-nav li .edit-btn {
@@ -153,7 +182,7 @@ button {
   right: 48px;
 }
 
-.sidebar-nav li .destroy {
+.sidebar-nav li .destroy-btn {
   /* Some space needed to the right, so when the button size increases
    * upon hovering no horizontal scrollbar appears for the menu:
    */
@@ -166,13 +195,13 @@ button {
   padding-right: calc(48px + 40px + 90px);
 }
 
-.sidebar-nav li div.view:hover .destroy,
+.sidebar-nav li div.view:hover .destroy-btn,
 .sidebar-nav li div.view:hover .explore-btn,
 .sidebar-nav li div.view:hover .edit-btn {
   display: block;
 }
 
-.sidebar-nav li .destroy:hover,
+.sidebar-nav li .destroy-btn:hover,
 .sidebar-nav li .accordion-btn:hover,
 .sidebar-nav li .explore-btn:hover,
 .sidebar-nav li .edit-btn:hover {
@@ -183,26 +212,6 @@ button {
 
 .sidebar-nav li .accordion-btn {
   left: 6px;
-}
-
-.sidebar-nav li .accordion-btn::after {
-  content: "▶";
-}
-
-.sidebar-nav li .accordion-btn.opened::after {
-  content: "▼";
-}
-
-.sidebar-nav li .explore-btn:after {
-  content: "🔎";
-}
-
-.sidebar-nav li .edit-btn:after {
-  content: "✎";
-}
-
-.sidebar-nav li .destroy:after {
-  content: "✖";
 }
 
 .edit {
@@ -343,7 +352,7 @@ button {
 @media (max-width: 768px) {
   /* Make sure the edit/destroy buttons are shown on mobile
    */
-  .sidebar-nav li .destroy,
+  .sidebar-nav li .destroy-btn,
   .sidebar-nav li .accordion-btn,
   .sidebar-nav li .explore-btn,
   .sidebar-nav li .edit-btn {

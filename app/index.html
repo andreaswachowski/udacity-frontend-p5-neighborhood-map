@@ -47,7 +47,7 @@
               <label class="ellipsis" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
               <button class="explore-btn" data-bind="click: $root.explorePlace"></button>
               <button class="edit-btn" data-bind="click: $root.editPlace"></button>
-              <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
+              <button class="destroy-btn" data-bind="event: { click: $root.destroyPlace }"></button>
             </div>
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
             <div data-bind="attr: {'id': 'collapse' + id }" class="collapse vicinity-results">
