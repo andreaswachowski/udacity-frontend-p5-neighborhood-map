@@ -584,7 +584,7 @@ var ViewModel = function() {
 
         if (self.foursquare) {
             self.foursquare.searchVenueAtPosition(place.position,
-                /* limit results to */ 3,
+                /* limit results to */ 5,
                 function(results, status, errMsg) {
                     if (status === 200) {
                     place.addVenues(results);
