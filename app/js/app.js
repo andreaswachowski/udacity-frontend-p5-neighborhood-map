@@ -571,11 +571,9 @@ var ViewModel = function() {
                     if (status === 200) {
                     place.addVenues(results);
                     self.storePlaces();
-                    self.setInfowindowContent(place);
                 } else {
                     place.fourSquareLookupError('FourSquare call failed with status ' + status);
                     console.warn(place.fourSquareLookupError());
-                    self.setInfowindowContent(place);
                 }
             });
         }

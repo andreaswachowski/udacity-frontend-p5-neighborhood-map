@@ -35,19 +35,33 @@
     <div id="wrapper" class="wrapper">
       <!-- Sidebar -->
       <div id="sidebar-wrapper" class="sidebar-wrapper">
-        <ul class="sidebar-nav" data-bind="foreach: search()">
+        <ul id="accordion" role="tablist" aria-multiselectable="true" class="sidebar-nav panel-group" data-bind="foreach: search()">
           <li data-bind="css: { editing: editing }">
             <div class="view">
-              <label data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+              <button class="accordion-btn toggle" data-toggle="collapse" href="#accordion li div:nth-child(2)"></button>
+              <label class="ellipsis" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
               <button class="explore-btn" data-bind="click: $root.explorePlace"></button>
               <button class="edit-btn" data-bind="click: $root.editPlace"></button>
-              <!-- Clicking the destroy button shall not bubble, thereby avoiding closing the dropdown, but the
-                data-keep-open-on-click approach is not working, because Knockout immediately triggers destroyPlace,
-                without jQuery having the chance to catch the event. Hence using Knockouts event-binding to stop
-                propagation.  -->
-                <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
+              <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
             </div>
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
+            <div id="collapseOne" class="collapse">
+              <div data-bind="if: venues().length > 0">
+                <h4>In the vicinity</h4>
+                <ul data-bind="foreach: venues()">
+                  <li>
+                    <span data-bind="text: name"></span>
+                    <span data-bind="text: categoryStr">
+                  </li>
+                </ul>
+              </div>
+              <!-- ko ifnot: venues().length > 0 -->
+              <!-- ko if: fourSquareLookupError() -->
+              <!-- silently ignore missing information, but show a warning -->
+              <p data-bind="text: fourSquareLookupError()"></p>
+              <!-- /ko -->
+              <!-- /ko -->
+            </div>
           </li>
         </ul>
       </div>
@@ -66,21 +80,6 @@
     <div id="infowindow" class="fixed" data-bind="with: currentPlace">
       <h3 data-bind="text: title"></h3>
       <div data-bind="text: formatted_address"></div>
-      <div data-bind="if: venues().length > 0">
-        <h4>In the vicinity</h4>
-        <ul data-bind="foreach: venues()">
-          <li>
-            <span data-bind="text: name"></span>
-            <span data-bind="text: categoryStr">
-          </li>
-        </ul>
-      </div>
-      <!-- ko ifnot: venues().length > 0 -->
-      <!-- ko if: fourSquareLookupError() -->
-      <!-- silently ignore missing information, but show a warning -->
-      <p data-bind="text: fourSquareLookupError()"></p>
-      <!-- /ko -->
-      <!-- /ko -->
     </div>
 
 <!-- build:js(.) js/vendor.js -->
@@ -94,7 +93,7 @@
     <!-- <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script> -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
-    <!-- <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script> -->
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
 <!-- endbuild -->
