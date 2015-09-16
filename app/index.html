@@ -35,17 +35,20 @@
     <div id="wrapper" class="wrapper">
       <!-- Sidebar -->
       <div id="sidebar-wrapper" class="sidebar-wrapper">
-        <ul id="accordion" role="tablist" aria-multiselectable="true" class="sidebar-nav panel-group" data-bind="foreach: search()">
+        <ul id="accordion" role="tablist" aria-multiselectable="true" class="sidebar-nav" data-bind="foreach: search()">
           <li data-bind="css: { editing: editing }">
             <div class="view">
-              <button class="accordion-btn toggle" data-toggle="collapse" href="#accordion li div:nth-child(2)"></button>
+              <button class="accordion-btn"
+                data-parent="#accordion"
+                data-toggle="collapse"
+                data-bind="attr: { 'data-target': '#collapse' + id }"></button>
               <label class="ellipsis" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
               <button class="explore-btn" data-bind="click: $root.explorePlace"></button>
               <button class="edit-btn" data-bind="click: $root.editPlace"></button>
               <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
             </div>
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
-            <div id="collapseOne" class="collapse">
+            <div data-bind="attr: {'id': 'collapse' + id }" class="collapse">
               <div data-bind="if: venues().length > 0">
                 <h4>In the vicinity</h4>
                 <ul data-bind="foreach: venues()">

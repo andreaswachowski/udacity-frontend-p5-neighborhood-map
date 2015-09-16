@@ -185,7 +185,7 @@ button {
   left: 6px;
 }
 
-.sidebar-nav li .accordion-btn.toggle::after {
+.sidebar-nav li .accordion-btn::after {
   content: "▶";
 }
 
@@ -228,6 +228,14 @@ button {
    * http://stackoverflow.com/questions/1030793/input-with-displayblock-is-not-a-block-why-not
    */
   box-sizing: border-box;
+}
+
+.sidebar-nav li .view {
+  /* Define .view as containing block so that the buttons
+   * stay vertically aligned in the title row, even when the
+   * accordion is expanded.
+   */
+  position: relative;
 }
 
 .sidebar-nav li.editing .view {
