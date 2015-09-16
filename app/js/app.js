@@ -169,16 +169,7 @@ Place.prototype.addVenues = function(venues,viewModel) {
         return {
             id: e.id,
             name: e.name,
-            categories: categories,
-            categoryStr: ko.computed(function() {
-                var categoryStr = categories.map(function(c) {
-                    return c.name;
-                }).join();
-                if (categoryStr !== '') {
-                    categoryStr = ' (' + categoryStr + ')';
-                }
-                return categoryStr;
-            })
+            categories: categories
         };
     }));
 };
