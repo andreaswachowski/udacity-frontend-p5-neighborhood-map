@@ -9,7 +9,7 @@
  * I should change the callback to make it work.
  */
 
-// This application only uses foursquare's userless API calls, therefore
+// This application only uses Foursquare's userless API calls, therefore
 // a client id and client secret are sufficient.
 var FOURSQUARE_CLIENT_ID; /* Initialize this! */
 var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
@@ -154,12 +154,12 @@ Place.getId = function() {
 };
 
 /**
- * Augments the Place object with foursquare venues.
- * @param {Array} venues - An array of foursquare compact venues, as returned by the FourSquare venue search API
+ * Augments the Place object with Foursquare venues.
+ * @param {Array} venues - An array of Foursquare compact venues, as returned by the Foursquare venue search API
  * @see {@link https://developer.foursquare.com/docs/responses/venue}
  */
 Place.prototype.addVenues = function(venues,viewModel) {
-    // Extract just the information we need from the foursquare object
+    // Extract just the information we need from the Foursquare object
     // and assign it to the Place's venues property (which is a
     // ko.observableArray).
     this.venues(venues.map(function (e) {
@@ -184,15 +184,15 @@ Place.prototype.addVenues = function(venues,viewModel) {
 };
 
 /**
- * @class FourSquare
+ * @class Foursquare
  *
- * Constructs a FourSquare api object. This object is currently
+ * Constructs a Foursquare api object. This object is currently
  * only intended for userless access.
  * @constructor
- * @param {String} clientId - The foursquare API client id
- * @param {String} clientSecret - The foursquare API client secret
+ * @param {String} clientId - The Foursquare API client id
+ * @param {String} clientSecret - The Foursquare API client secret
  */
-var FourSquare = function(clientId, clientSecret) {
+var Foursquare = function(clientId, clientSecret) {
     this.baseUrl = 'https://api.foursquare.com/v2';
     this.apiVersion = '20150824';
 
@@ -200,7 +200,7 @@ var FourSquare = function(clientId, clientSecret) {
     this.clientSecret = clientSecret;
 };
 
-FourSquare.showError = function(message) {
+Foursquare.showError = function(message) {
     $('<div id="foursquare-error" class="white-on-red-warning">').html(message).appendTo(".sidebar-page-content-wrapper");
     window.setTimeout(function() {
         $('#foursquare-error').remove();
@@ -208,28 +208,28 @@ FourSquare.showError = function(message) {
     console.warn(message);
 };
 
-FourSquare.showMissingCredentialsError = function() {
-    FourSquare.showError("To use FourSquare functionality, add foursquare API credentials to app.js.");
+Foursquare.showMissingCredentialsError = function() {
+    Foursquare.showError("To use Foursquare functionality, add Foursquare API credentials to app.js.");
 };
 
-FourSquare.prototype.validApiCredentials = function() {
+Foursquare.prototype.validApiCredentials = function() {
     var validCredentials = this.clientId && this.clientSecret;
     if (!validCredentials) {
-        FourSquare.showError("No valid foursquare API credentials provided. FourSquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
+        Foursquare.showError("No valid Foursquare API credentials provided. Foursquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
     }
     return validCredentials;
 };
 
 /**
- * Given a location, search foursquare for the most likely venues at that
+ * Given a location, search Foursquare for the most likely venues at that
  * location.
  * @param {LatLngLiteral} position - The position of the venue.
  * @param {Number} limit - The maximum number of venues returned
  * @param {function} callback - A function with two parameters, result and status, that handles the response
  * @see {@link https://developer.foursquare.com/docs/venues/search}
  */
-FourSquare.prototype.searchVenueAtPosition = function(position, limit, callback) {
-    // Note: With more FourSquare methods, we would not want to remember to
+Foursquare.prototype.searchVenueAtPosition = function(position, limit, callback) {
+    // Note: With more Foursquare methods, we would not want to remember to
     // add this check in every method. Instead we might then use a State pattern.
     if (!this.validApiCredentials()){
         return;
@@ -244,7 +244,7 @@ FourSquare.prototype.searchVenueAtPosition = function(position, limit, callback)
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
             if(xmlhttp.status == 200) {
                 // TODO From a security viewpoint, I suppose that using
-                // eval() boils down to trusting the FourSquare servers
+                // eval() boils down to trusting the Foursquare servers
                 // The API returns an array called 'venues'
                 venues = eval('('+xmlhttp.responseText+')').response.venues;
             }
@@ -259,7 +259,7 @@ FourSquare.prototype.searchVenueAtPosition = function(position, limit, callback)
     xmlhttp.send();
 };
 
-FourSquare.prototype.apiCallPostFix = function() {
+Foursquare.prototype.apiCallPostFix = function() {
     return '&client_id=' + this.clientId +
         '&client_secret=' + this.clientSecret +
         '&v=' + this.apiVersion;
@@ -333,8 +333,8 @@ var ViewModel = function() {
     self.places = ko.observableArray(model.places);
     self.currentPlace = ko.observable();
 
-    // if API credentials available, fourSquare will be initialized in self.initialize
-    self.fourSquare;
+    // if API credentials available, Foursquare will be initialized in self.initialize
+    self.foursquare;
 
     // To cleanly separate the model (ie places with lat/lng, an address, a title etc.)
     // from the view (esp. Google markers), the markers are tracked in a separate array,
@@ -458,9 +458,9 @@ var ViewModel = function() {
             // input = document.getElementById('pac-input'),
 
         if (FOURSQUARE_CLIENT_ID && FOURSQUARE_CLIENT_ID) {
-            self.fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
+            self.foursquare = new Foursquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
         } else {
-            FourSquare.showMissingCredentialsError();
+            Foursquare.showMissingCredentialsError();
         }
 
         self.places.subscribe(function (places) {
@@ -587,19 +587,19 @@ var ViewModel = function() {
         // In case another place is currently shown
         self.showPlace(place);
 
-        if (self.fourSquare) {
-            self.fourSquare.searchVenueAtPosition(place.position,
+        if (self.foursquare) {
+            self.foursquare.searchVenueAtPosition(place.position,
                 /* limit results to */ 3,
                 function(results, status) {
                     if (status === 200) {
                     place.addVenues(results);
                     self.storePlaces();
                 } else {
-                    FourSquare.showError("FourSquare call failed with status " + status);
+                    Foursquare.showError("Foursquare call failed with status " + status);
                 }
             });
         } else {
-            FourSquare.showMissingCredentialsError();
+            Foursquare.showMissingCredentialsError();
         }
     };
 
