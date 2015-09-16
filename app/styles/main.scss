@@ -160,15 +160,15 @@ button {
   right: 6px;
 }
 
-.sidebar-nav li:hover label {
+.sidebar-nav li div.view:hover label {
   /* Limit the label width so the buttons can be freely displayed */
   /* 48px accordion-btn + 40px for width of explore-btn + 90px for right offset of explore-btn */
   padding-right: calc(48px + 40px + 90px);
 }
 
-.sidebar-nav li:hover .destroy,
-.sidebar-nav li:hover .explore-btn,
-.sidebar-nav li:hover .edit-btn {
+.sidebar-nav li div.view:hover .destroy,
+.sidebar-nav li div.view:hover .explore-btn,
+.sidebar-nav li div.view:hover .edit-btn {
   display: block;
 }
 
@@ -349,6 +349,12 @@ button {
   .sidebar-nav li .edit-btn {
     display: block;
   }
+
+  /* On mobile, always (ie not only on hover) limit the label width so the buttons can be freely displayed */
+  /* 48px accordion-btn + 40px for width of explore-btn + 90px for right offset of explore-btn */
+  .sidebar-nav li div.view label {
+    padding-right: calc(48px + 40px + 90px);
+  }
 }
 
 /* Use at least 16px for the filter search box to avoid auto zooming on ios devices
@@ -428,6 +434,44 @@ only screen and (-webkit-device-pixel-ratio: 1)
     position: relative;
     margin-right: 0;
   }
+}
+
+.vicinity-heading {
+  margin-left: 18px; /* Measured by idea. coincide with the left-most pixel of the accordion's triangle. */
+}
+
+.vicinity-results {
+  position: relative;
+}
+
+.vicinity-results ul {
+  margin: 0;
+  padding: 0;
+  padding-right: 1em;
+  list-style: none;
+}
+
+/* TODO(refactor): Start to use BEM or similar naming convention to avoid specificity
+ * Cf. http://csswizardry.com/2014/10/the-specificity-graph/
+ * https://www.youtube.com/watch?v=1OKZOV-iLj4&hd=1
+ */
+.sidebar-nav .vicinity-results label {
+  margin: auto 0;
+  margin-left: 18px; /* Measured by idea. coincide with the left-most pixel of the accordion's triangle. */
+  padding: 1.3em 0; /* "calculated" by eye-sight */
+}
+
+.vicinity-results .venue-categories {
+  display: inline-block;
+  font-size: 0.7em;
+}
+
+.vicinity-results .venue-categories span {
+  border-radius: 4px;
+  background-color: #6bbae5;
+  color: #FFF;
+  padding: 3px;
+  border: 1px;
 }
 
 /* The navbar contains only the side bar toggle and the search textfield, so we don't need it to collapse.

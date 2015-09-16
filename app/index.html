@@ -48,13 +48,15 @@
               <button class="destroy" data-bind="event: { click: $root.destroyPlace }"></button>
             </div>
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
-            <div data-bind="attr: {'id': 'collapse' + id }" class="collapse">
+            <div data-bind="attr: {'id': 'collapse' + id }" class="collapse vicinity-results">
               <div data-bind="if: venues().length > 0">
-                <h4>In the vicinity</h4>
+                <h4 class="vicinity-heading">In the vicinity</h4>
                 <ul data-bind="foreach: venues()">
                   <li>
-                    <span data-bind="text: name"></span>
-                    <span data-bind="text: categoryStr">
+                    <label class="title" data-bind="text: name"></label>
+                    <div class="venue-categories" data-bind="foreach: categories">
+                      <span data-bind="text: name"></span>
+                    </div>
                   </li>
                 </ul>
               </div>
