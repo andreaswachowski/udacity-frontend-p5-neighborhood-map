@@ -547,6 +547,18 @@ var ViewModel = function() {
                 google.maps.event.trigger(map, 'resize');
             }, 500);
         });
+
+        // Rotate the triangle when an accordion element is shown
+        // Use event delegation to avoid adding a handler on every place
+        $('#accordion').on('show.bs.collapse', function (ev) {
+            console.log(ev.target);
+            $('[data-target="#'+ev.target.id+'"]').toggleClass('opened');
+        });
+
+        $('#accordion').on('hide.bs.collapse', function (ev) {
+            console.log(ev.target);
+            $('[data-target="#'+ev.target.id+'"]').toggleClass('opened');
+        });
     };
 
     self.setInfowindowContent = function(place) {

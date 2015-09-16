@@ -189,7 +189,7 @@ button {
   content: "▶";
 }
 
-.sidebar-nav li .accordion-btn.toggled::after {
+.sidebar-nav li .accordion-btn.opened::after {
   content: "▼";
 }
 
