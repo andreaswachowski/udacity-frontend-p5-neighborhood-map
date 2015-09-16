@@ -256,7 +256,7 @@ button {
  */
 .white-on-red-warning {
   position: absolute;
-  top: calc(50px + 1em); /* A little bit below the navbar, which is 50px high */
+  top: 1em;
   left: 1em;
   border-radius: 0.2em;
   font: bold 1em sans-serif;
