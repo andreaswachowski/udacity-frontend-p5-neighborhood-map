@@ -141,7 +141,6 @@ var Place = function(position) {
     this.street_name = '';
     this.editing = ko.observable(false);
     this.venues = ko.observableArray();
-    this.fourSquareLookupError = ko.observable();
 };
 
 /**
@@ -201,10 +200,22 @@ var FourSquare = function(clientId, clientSecret) {
     this.clientSecret = clientSecret;
 };
 
+FourSquare.showError = function(message) {
+    $('<div id="foursquare-error" class="white-on-red-warning">').html(message).appendTo(".sidebar-page-content-wrapper");
+    window.setTimeout(function() {
+        $('#foursquare-error').remove();
+    }, 2000);
+    console.warn(message);
+};
+
+FourSquare.showMissingCredentialsError = function() {
+    FourSquare.showError("To use FourSquare functionality, add foursquare API credentials to app.js.");
+};
+
 FourSquare.prototype.validApiCredentials = function() {
     var validCredentials = this.clientId && this.clientSecret;
     if (!validCredentials) {
-        console.warn("No valid foursquare API credentials provided. FourSquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
+        FourSquare.showError("No valid foursquare API credentials provided. FourSquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
     }
     return validCredentials;
 };
@@ -448,6 +459,8 @@ var ViewModel = function() {
 
         if (FOURSQUARE_CLIENT_ID && FOURSQUARE_CLIENT_ID) {
             self.fourSquare = new FourSquare(FOURSQUARE_CLIENT_ID, FOURSQUARE_CLIENT_SECRET);
+        } else {
+            FourSquare.showMissingCredentialsError();
         }
 
         self.places.subscribe(function (places) {
@@ -582,10 +595,11 @@ var ViewModel = function() {
                     place.addVenues(results);
                     self.storePlaces();
                 } else {
-                    place.fourSquareLookupError('FourSquare call failed with status ' + status);
-                    console.warn(place.fourSquareLookupError());
+                    FourSquare.showError("FourSquare call failed with status " + status);
                 }
             });
+        } else {
+            FourSquare.showMissingCredentialsError();
         }
     };
 
