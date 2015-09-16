@@ -551,12 +551,10 @@ var ViewModel = function() {
         // Rotate the triangle when an accordion element is shown
         // Use event delegation to avoid adding a handler on every place
         $('#accordion').on('show.bs.collapse', function (ev) {
-            console.log(ev.target);
             $('[data-target="#'+ev.target.id+'"]').toggleClass('opened');
         });
 
         $('#accordion').on('hide.bs.collapse', function (ev) {
-            console.log(ev.target);
             $('[data-target="#'+ev.target.id+'"]').toggleClass('opened');
         });
     };
