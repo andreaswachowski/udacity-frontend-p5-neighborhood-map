@@ -52,7 +52,7 @@
             <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
             <div data-bind="attr: {'id': 'collapse' + id }" class="collapse vicinity-results">
               <div data-bind="if: venues().length > 0">
-                <h4 class="vicinity-heading">In the vicinity</h4>
+                <h4 class="vicinity-heading">Foursquare vicinity</h4>
                 <ul data-bind="foreach: venues()">
                   <li>
                     <label class="title" data-bind="text: name"></label>
