@@ -162,13 +162,22 @@ Place.prototype.addVenues = function(venues,viewModel) {
     // Extract just the information we need from the Foursquare object
     // and assign it to the Place's venues property (which is a
     // ko.observableArray).
-    this.venues(venues.map(function (e) {
-        var categories = e.categories.map(function (c) {
-                return { name: c.name };
+    this.venues(venues.map(function (v) {
+        var categories = v.categories.map(function (c) {
+            // The prefix contains an asset server domain, for which a permission denied error is given on access.
+            // Therefore we insert the generic foursquare domain instead.
+            var iconSize = '32';
+            var iconUrl = c.icon.prefix.replace(/^http[s]:\/\/[^/]*/,'https://foursquare.com') + iconSize + c.icon.suffix;
+                return { name: c.name,
+                    primary: c.primary,
+                    iconUrl: iconUrl
+                };
             });
         return {
-            id: e.id,
-            name: e.name,
+            id: v.id,
+            location: v.location,
+            name: v.name,
+            contact: v.contact,
             categories: categories
         };
     }));

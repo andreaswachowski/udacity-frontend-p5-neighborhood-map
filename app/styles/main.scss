@@ -43,6 +43,10 @@ button {
   display: none;
 }
 
+.font-weight-normal {
+  font-weight: normal;
+}
+
 /* See https://css-tricks.com/almanac/properties/t/text-overflow/ */
 .ellipsis {
   text-overflow: ellipsis;
@@ -446,15 +450,12 @@ only screen and (-webkit-device-pixel-ratio: 1)
   }
 }
 
-.vicinity-heading {
+.vicinity {
+  position: relative;
   margin-left: 18px; /* Measured by idea. coincide with the left-most pixel of the accordion's triangle. */
 }
 
-.vicinity-results {
-  position: relative;
-}
-
-.vicinity-results ul {
+.vicinity ul {
   margin: 0;
   padding: 0;
   padding-right: 1em;
@@ -465,18 +466,21 @@ only screen and (-webkit-device-pixel-ratio: 1)
  * Cf. http://csswizardry.com/2014/10/the-specificity-graph/
  * https://www.youtube.com/watch?v=1OKZOV-iLj4&hd=1
  */
-.sidebar-nav .vicinity-results label {
-  margin: auto 0;
-  margin-left: 18px; /* Measured by idea. coincide with the left-most pixel of the accordion's triangle. */
-  padding: 1.3em 0; /* "calculated" by eye-sight */
+.sidebar-nav .vicinity li {
+  min-width: calc(300px - 18px);
 }
 
-.vicinity-results .venue-categories {
-  display: inline-block;
+.sidebar-nav .vicinity label {
+  margin: auto 0;
+  padding: 0; /* "calculated" by eye-sight */
+}
+
+.venue-categories {
+  display: block;
   font-size: 0.7em;
 }
 
-.vicinity-results .venue-categories span {
+.venue-categories span {
   border-radius: 4px;
   background-color: #6bbae5;
   color: #FFF;
