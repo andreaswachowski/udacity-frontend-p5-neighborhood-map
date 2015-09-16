@@ -180,6 +180,8 @@ Place.prototype.addVenues = function(venues,viewModel) {
             contact: v.contact,
             categories: categories
         };
+    }).sort(function(v1,v2) {
+        return v1.location.distance > v2.location.distance;
     }));
 };
 
