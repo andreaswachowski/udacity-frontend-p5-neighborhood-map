@@ -233,13 +233,17 @@ Foursquare.prototype.searchVenueAtPosition = function(position, limit, callback)
 
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+            var errMsg;
             if(xmlhttp.status == 200) {
                 // TODO From a security viewpoint, I suppose that using
                 // eval() boils down to trusting the Foursquare servers
                 // The API returns an array called 'venues'
                 venues = eval('('+xmlhttp.responseText+')').response.venues;
+            } else {
+                errMsg = JSON.parse(xmlhttp.responseText).meta.errorDetail;
+                console.error("XMLHttpRequest returned with status " + xmlhttp.status + ": " + errMsg);
             }
-            callback(venues,xmlhttp.status);
+            callback(venues,xmlhttp.status,errMsg);
         }
     };
 
@@ -581,12 +585,12 @@ var ViewModel = function() {
         if (self.foursquare) {
             self.foursquare.searchVenueAtPosition(place.position,
                 /* limit results to */ 3,
-                function(results, status) {
+                function(results, status, errMsg) {
                     if (status === 200) {
                     place.addVenues(results);
                     self.storePlaces();
                 } else {
-                    Foursquare.showError("Foursquare call failed with status " + status);
+                    Foursquare.showError("Foursquare call failed with status " + status + ": " + errMsg);
                 }
             });
         } else {
