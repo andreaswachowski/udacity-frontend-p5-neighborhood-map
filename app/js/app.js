@@ -137,8 +137,7 @@ var Place = function(position) {
     // TODO(refactor): Use consistent naming convention, here: camelCase
     this.formatted_address = ko.observableArray();
     this.categories = ko.observableArray();
-    this.street_number = '';
-    this.street_name = '';
+    //this.address = '';
     this.editing = ko.observable(false);
     this.venues = ko.observableArray();
 };
@@ -821,8 +820,7 @@ var ViewModel = function() {
                     place.title(p.title);
                     place.position = p.position;
                     place.formatted_address = p.formatted_address;
-                    place.street_number = p.street_number;
-                    place.street_name = p.street_name;
+                    place.address = p.address;
                     place.venues(p.venues);
                     self.places.push(place);
                 });
