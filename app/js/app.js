@@ -464,35 +464,60 @@ var ViewModel = function() {
         marker.setMap(null); // remove marker from Google Map
     };
 
-    self.initialize = function() {
-        if (navigator.geolocation) {
-            $('#geolocation-dialogue').removeClass('hidden');
-            $('#geolocation-dialogue').click(function(ev) {
-                var permission = ev.target.id === "current-location-btn";
+    self.retrieveMapCenter = function() {
+        var mapCenter;
+        if (store.enabled) {
+            mapCenter = store.get('mapCenter');
+        }
+        return mapCenter;
+    };
 
-                console.log(permission);
-                if (permission) {
-                    navigator.geolocation.getCurrentPosition(
-                        function(position) {
-                            model.map.center.lat = position.coords.latitude;
-                            model.map.center.lng = position.coords.longitude;
-                            self.initializeMap();
-                        },
-                        function(error) {
-                            ErrorMsg.showError("Could not retrieve geolocation: " + error.code + ' ' + error.message +
-                                               ", proceeding with default map center");
-                            self.initializeMap();
-                        },
-                        {
-                            enableHighAccuracy: false,
-                            timeout: 30*1000, /* msec = 30 seconds */
-                            maximumAge: 10*60*1000 /* msec = 10 minutes */
-                        });
-                } else {
-                    self.initializeMap();
-                }
-            });
+    self.saveMapCenter = function() {
+        if (store.enabled) {
+            store.set('mapCenter',model.map.center);
+        }
+    };
+
+    self.initialize = function() {
+        var mapCenter = self.retrieveMapCenter();
+        if (!mapCenter) {
+            if (navigator.geolocation) {
+                $('#geolocation-dialogue').removeClass('hidden');
+                $('#geolocation-dialogue').click(function(ev) {
+                    var permission = ev.target.id === "current-location-btn";
+
+                    // In either case, save the map center for future sessions so it need not be chosen
+                    // every time
+                    if (permission) {
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                model.map.center.lat = position.coords.latitude;
+                                model.map.center.lng = position.coords.longitude;
+                                self.saveMapCenter(model.map.center);
+                                self.initializeMap();
+                            },
+                            function(error) {
+                                ErrorMsg.showError("Could not retrieve geolocation: " + error.code + ' ' + error.message +
+                                                   ", proceeding with default map center");
+                                self.initializeMap();
+                            },
+                            {
+                                enableHighAccuracy: false,
+                                timeout: 30*1000, /* msec = 30 seconds */
+                                maximumAge: 10*60*1000 /* msec = 10 minutes */
+                            });
+                    } else {
+                        self.saveMapCenter(model.map.center);
+                        self.initializeMap();
+                    }
+                });
+            } else {
+                // Not necessary to save the map center, since with no geolocation, it will never be changed
+                // self.saveMapCenter(model.map.center);
+                self.initializeMap();
+            }
         } else {
+            model.map.center = mapCenter;
             self.initializeMap();
         }
     };
