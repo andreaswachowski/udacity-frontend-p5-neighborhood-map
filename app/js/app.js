@@ -20,20 +20,17 @@ var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
  */
 function loadScript() {
     if (navigator.onLine) {
-        $('nav').removeClass('hidden');
-        $('#map-canvas').removeClass('hidden');
+        $('#offline-on-load').remove(); // just in case, if we were offline at start.
 
-        $('#offline-on-load').addClass('hidden');
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
         '&signed_in=true&callback=initialize';
         document.body.appendChild(script);
     } else {
-        $('nav').addClass('hidden');
-        $('#map-canvas').addClass('hidden');
-
-        $('#offline-on-load').removeClass('hidden');
+        if ($('#offline-on-load').length === 0) {
+            $('<div id="offline-on-load" class="white-on-red-warning">').html('The browser is offline. Connect to the Internet and wait for the page to reload').appendTo('body');
+        }
         setTimeout(loadScript, 3000);
     }
 }
@@ -54,7 +51,8 @@ function initialize() {
  */
 var model = {
     map: {
-        center: { lat: 53.562261, lng: 9.961613 },
+        // center: { lat: 42.3580212, lng: -71.0955016 }, // MIT
+        center: { lat: 37.4274641, lng: -122.1697382 }, // Stanford
         initialZoomFactor: 15
     },
     places: [] // elements are of type Place, see below
@@ -186,6 +184,30 @@ Place.prototype.addVenues = function(venues,viewModel) {
 };
 
 /**
+ * @class ErrorMsg
+ *
+ * Provides just a few static methods to simplify error output.
+ */
+var ErrorMsg = function() {
+};
+
+ErrorMsg.showWarning = function(message) {
+    $('<div id="warningmsg" class="white-on-red-warning">').html(message).appendTo(".sidebar-page-content-wrapper");
+    window.setTimeout(function() {
+        $('#warningmsg').remove();
+    }, 2000);
+    console.warn(message);
+};
+
+ErrorMsg.showError = function(message) {
+    $('<div id="errormsg" class="white-on-red-warning">').html(message).appendTo(".sidebar-page-content-wrapper");
+    window.setTimeout(function() {
+        $('#errormsg').remove();
+    }, 2000);
+    console.error(message);
+};
+
+/**
  * @class Foursquare
  *
  * Constructs a Foursquare api object. This object is currently
@@ -202,22 +224,14 @@ var Foursquare = function(clientId, clientSecret) {
     this.clientSecret = clientSecret;
 };
 
-Foursquare.showError = function(message) {
-    $('<div id="foursquare-error" class="white-on-red-warning">').html(message).appendTo(".sidebar-page-content-wrapper");
-    window.setTimeout(function() {
-        $('#foursquare-error').remove();
-    }, 2000);
-    console.warn(message);
-};
-
 Foursquare.showMissingCredentialsError = function() {
-    Foursquare.showError("To use Foursquare functionality, add Foursquare API credentials to app.js.");
+    ErrorMsg.showWarning("To use Foursquare functionality, add Foursquare API credentials to app.js.");
 };
 
 Foursquare.prototype.validApiCredentials = function() {
     var validCredentials = this.clientId && this.clientSecret;
     if (!validCredentials) {
-        Foursquare.showError("No valid Foursquare API credentials provided. Foursquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
+        ErrorMsg.showWarning("No valid Foursquare API credentials provided. Foursquare API calls won't be made. To fix, initialize FOURSQUARE_CLIENT_ID and FOURSQUARE_CLIENT_SECRET in app.js appropriately.");
     }
     return validCredentials;
 };
@@ -451,6 +465,43 @@ var ViewModel = function() {
     };
 
     self.initialize = function() {
+        if (navigator.geolocation) {
+            $('#geolocation-dialogue').removeClass('hidden');
+            $('#geolocation-dialogue').click(function(ev) {
+                var permission = ev.target.id === "current-location-btn";
+
+                console.log(permission);
+                if (permission) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            model.map.center.lat = position.coords.latitude;
+                            model.map.center.lng = position.coords.longitude;
+                            self.initializeMap();
+                        },
+                        function(error) {
+                            ErrorMsg.showError("Could not retrieve geolocation: " + error.code + ' ' + error.message +
+                                               ", proceeding with default map center");
+                            self.initializeMap();
+                        },
+                        {
+                            enableHighAccuracy: false,
+                            timeout: 30*1000, /* msec = 30 seconds */
+                            maximumAge: 10*60*1000 /* msec = 10 minutes */
+                        });
+                } else {
+                    self.initializeMap();
+                }
+            });
+        } else {
+            self.initializeMap();
+        }
+    };
+
+    self.initializeMap = function() {
+        $('#geolocation-dialogue').remove();
+        $('nav').removeClass('hidden');
+        $('#wrapper').removeClass('hidden');
+
         var mapOptions = {
                 center: model.map.center,
                 zoom: model.map.initialZoomFactor,
@@ -601,7 +652,7 @@ var ViewModel = function() {
                     place.addVenues(results);
                     self.storePlaces();
                 } else {
-                    Foursquare.showError("Foursquare call failed with status " + status + ": " + errMsg);
+                    ErrorMsg.showError("Foursquare call failed with status " + status + ": " + errMsg);
                 }
             });
         } else {

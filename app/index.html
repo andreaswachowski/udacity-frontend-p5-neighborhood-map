@@ -13,7 +13,13 @@
     <title>Neighborhood Map</title>
   </head>
   <body>
-    <nav class="navbar navbar-default">
+    <!-- The geolocation div will be removed in initializeMap(), before launching the actual app -->
+    <div class="container-fluid hidden" id="geolocation-dialogue">
+      <h1>Choose the map center</h1>
+      <button id="current-location-btn" class="btn btn-default" type="submit">My current location</button>
+      <button id="default-location-btn" class="btn btn-default" type="submit">Default location (Stanford University)</button>
+    </div>
+    <nav class="navbar navbar-default hidden">
       <div class="container-fluid">
           <button type="button" id="menu-toggle" class="navbar-left navbar-toggle btn btn-default">
             <span class="sr-only">Toggle places</span>
@@ -32,7 +38,7 @@
           </form>
       </div><!-- /.container-fluid -->
     </nav>
-    <div id="wrapper" class="wrapper">
+    <div id="wrapper" class="wrapper hidden">
       <!-- Sidebar -->
       <div id="sidebar-wrapper" class="sidebar-wrapper">
         <ul id="accordion" role="tablist" aria-multiselectable="true" class="sidebar-nav" data-bind="foreach: search()">
@@ -74,8 +80,6 @@
       <div class="sidebar-page-content-wrapper">
         <div id="connection-lost-warning" class="white-on-red-warning hidden">Connection lost, please reconnect to continue</div>
         <div id="map-canvas" class="fill-screen"></div>
-        <div id="offline-on-load" class="white-on-red-warning hidden">The browser is offline. Connect to the Internet and wait
-          for the page to reload.</div>
       </div>
     </div> <!-- wrapper -->
 
