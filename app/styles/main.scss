@@ -43,12 +43,37 @@ button {
   display: none;
 }
 
+/* Cf. http://www.smashingmagazine.com/2013/08/absolute-horizontal-vertical-centering-css/
+ * for background on center-container and vertical-center
+ */
+.center-container {
+  position: relative;
+}
+
+.vertical-center {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.row-height {
+  height: 66px;
+}
+
 .font-weight-normal {
   font-weight: normal;
 }
 
-.inline-block {
-  display: inline-block;
+/* Not for IE<10, but I did not find another way to center the two vertically stacked divs
+ * for the title and the categories otherwise
+ */
+.description {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* See https://css-tricks.com/almanac/properties/t/text-overflow/ */
@@ -58,6 +83,23 @@ button {
   /* Required for text-overflow to do anything */
   white-space: nowrap;
   overflow: hidden;
+}
+
+.categories {
+  display: block;
+  font-size: 0.7em;
+}
+
+.indent-past-accordion {
+  margin-left: 48px; /* 6px of left offset from accordion-btn + 40px width of accordion-btn + 2px for good measure */
+}
+
+.categories span {
+  border-radius: 4px;
+  background-color: #6bbae5;
+  color: #FFF;
+  padding: 3px;
+  border: 1px;
 }
 
 .navbar {
@@ -149,17 +191,20 @@ button {
   list-style: none;
 }
 
+.nearby-heading {
+  height: 33px; /* Measured by eye */
+  margin: 0; /* Reset Bootstrap default */
+}
+
 .sidebar-nav li {
-  position: relative; /* position relative ensures that the buttons appear next to the label */
-  min-height: 48px; /* expandable to accommodate accordion */
+  position: relative;
+  min-height: 66px;
   min-width: 300px;
 }
 
 .sidebar-nav li label {
   position: relative;
-  margin: auto 0;
-  margin-left: 48px; /* 6px of left offset from accordion-btn + 40px width of accordion-btn + 2px for good measure */
-  padding: 1.3em; /* "calculated" by eye-sight */
+  margin-bottom: 0; /* Override 5px from Bootstrap label */
   padding-left: 0;
 }
 
@@ -168,14 +213,13 @@ button {
 .sidebar-nav li .accordion-btn,
 .sidebar-nav li .favorite-btn,
 .sidebar-nav li .edit-btn {
-  display: none;
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 40px;
-  height: 40px;
-  font-size: 22px;
   margin: auto 0;
+  display: none;
+  width: 40px;
+  font-size: 22px;
   transition: all 0.2s;
 }
 
@@ -479,21 +523,7 @@ only screen and (-webkit-device-pixel-ratio: 1)
 }
 
 .sidebar-nav .vicinity label {
-  margin: auto 0;
-  padding: 0; /* "calculated" by eye-sight */
-}
-
-.venue-categories {
-  display: block;
-  font-size: 0.7em;
-}
-
-.venue-categories span {
-  border-radius: 4px;
-  background-color: #6bbae5;
-  color: #FFF;
-  padding: 3px;
-  border: 1px;
+  margin: 0;
 }
 
 /* The navbar contains only the side bar toggle and the search textfield, so we don't need it to collapse.
