@@ -819,7 +819,8 @@ var ViewModel = function() {
                     var place = new Place();
                     place.title(p.title);
                     place.position = p.position;
-                    place.formatted_address = p.formatted_address;
+                    place.formatted_address(p.formatted_address);
+                    place.categories(p.categories);
                     place.address = p.address;
                     place.venues(p.venues);
                     self.places.push(place);
