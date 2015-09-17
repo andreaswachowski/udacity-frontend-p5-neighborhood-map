@@ -779,11 +779,11 @@ var ViewModel = function() {
                     // TODO(feat): Locale-specific formatting of street name and street number
                     place.title(place.address.street.name + ' ' + place.address.street.number);
                 } else {
-                    place.formatted_address = 'unknown (GeoCoder lookup did not return a result)';
+                    ErrorMsg.showError('unknown address (GeoCoder lookup did not return a result)');
                     place.title('unknown');
                 }
             } else {
-                place.formatted_address = 'unknown (Geocoder failed due to ' + status + ')';
+                ErrorMsg.showError('Geocoder API call failed: ' + status);
                 place.title('unknown');
             }
             self.storePlaces();
