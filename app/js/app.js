@@ -134,7 +134,9 @@ var Place = function(position) {
         lat: position && position.lat(),
         lng: position && position.lng()
     };
-    this.formatted_address = '';
+    // TODO(refactor): Use consistent naming convention, here: camelCase
+    this.formatted_address = ko.observableArray();
+    this.categories = ko.observableArray();
     this.street_number = '';
     this.street_name = '';
     this.editing = ko.observable(false);
@@ -685,6 +687,30 @@ var ViewModel = function() {
         }
     };
 
+    self.promoteVenue = function (venue) {
+        var place = new Place();
+        place.title(venue.name);
+        place.position = {
+            lat: venue.location.lat,
+            lng: venue.location.lng
+        };
+        place.formatted_address(venue.location.formattedAddress);
+
+        // TODO(feat): Extract street number and street name.
+        // Street number and street name are not available as explicit fields from fourSquare (just one joint
+        // 'location.address' field).
+        // It might be possible to extract them from the given data, but their position in the string is locale-specific.
+        //
+        // Probably its better to use the reverse Geocoder with lat/lng to retrieve them (or validate against).
+        // In any event, I don't need them for now and can just rely on the formatted address.
+
+        place.categories(venue.categories);
+
+        self.places.push(place);
+        self.showPlace(place);
+        console.log(venue);
+    };
+
     self.editPlace = function (place) {
         place.editing(true);
         // TODO: Save *all* place information, not just the title
@@ -730,14 +756,29 @@ var ViewModel = function() {
         geocoder.geocode({'location': position}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 if (results[0]) {
-                    // TODO: There is usually a *lot* more that can be
-                    // extracted from the results.
-                    place.formatted_address = results[0].formatted_address;
-                    place.street_number = results[0].address_components[0].long_name;
-                    place.street_name = results[0].address_components[1].long_name;
-                    // Note: The order of street name and street number in the initial title assignment should in fact be
-                    // locale-dependent.
-                    place.title(place.street_name + ' ' + place.street_number);
+                    // Convert formatted address into an array, for more flexible formatting
+                    // (Foursquare already returns such an array.)
+                    // We assume that the comma is a separator character and does not appear anywhere else
+                    // in the returned formatted address
+                    place.formatted_address(results[0].formatted_address.split(',').map(function (el) {
+                        return el.trim();
+                    }));
+
+                    // TODO(refactor): The Geocoder provides a "types" array which would allow to dynamically
+                    // map to the address_components indices, for increased robustness
+                    place.address = {
+                        street: {
+                            number: results[0].address_components[0].long_name,
+                            name:  results[0].address_components[1].long_name
+                        },
+                        sublocality: results[0].address_components[2].long_name,
+                        city:  results[0].address_components[3].long_name, /* Geocoder type: locality */
+                        administrative_area: results[0].address_components[4].long_name,
+                        country: results[0].address_components[5].long_name,
+                        postalCode: results[0].address_components[6].long_name
+                    };
+                    // TODO(feat): Locale-specific formatting of street name and street number
+                    place.title(place.address.street.name + ' ' + place.address.street.number);
                 } else {
                     place.formatted_address = 'unknown (GeoCoder lookup did not return a result)';
                     place.title('unknown');

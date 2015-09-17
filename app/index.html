@@ -61,13 +61,16 @@
                 <h4 class="vicinity-heading">Nearby</h4>
                 <ul data-bind="foreach: venues()">
                   <li>
-                    <label class="title">
-                      <span data-bind="text: name"></span>
-                      <span class="font-weight-normal"> (<span data-bind="text: location.distance"></span>m)</span>
-                    </label>
-                    <div class="venue-categories" data-bind="foreach: categories">
-                      <span data-bind="text: name"></span>
+                    <div class="inline-block">
+                      <label class="title">
+                        <span data-bind="text: name"></span>
+                        <span class="font-weight-normal"> (<span data-bind="text: location.distance"></span>m)</span>
+                      </label>
+                      <div class="venue-categories" data-bind="foreach: categories">
+                        <span data-bind="text: name"></span>
+                      </div>
                     </div>
+                    <button class="favorite-btn" data-bind="click: $root.promoteVenue"></button>
                   </li>
                 </ul>
               </div>
@@ -87,7 +90,7 @@
       be appended below them, and a vertical scrollbar would appear at the map's right margin.  -->
     <div id="infowindow" class="fixed" data-bind="with: currentPlace">
       <h3 data-bind="text: title"></h3>
-      <div data-bind="text: formatted_address"></div>
+      <div data-bind="text: formatted_address().join(', ')"></div>
     </div>
 
 <!-- build:js(.) js/vendor.js -->

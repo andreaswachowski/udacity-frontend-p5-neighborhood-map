@@ -47,6 +47,10 @@ button {
   font-weight: normal;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 /* See https://css-tricks.com/almanac/properties/t/text-overflow/ */
 .ellipsis {
   text-overflow: ellipsis;
@@ -162,6 +166,7 @@ button {
 .sidebar-nav li .destroy-btn,
 .sidebar-nav li .explore-btn,
 .sidebar-nav li .accordion-btn,
+.sidebar-nav li .favorite-btn,
 .sidebar-nav li .edit-btn {
   display: none;
   position: absolute;
@@ -186,6 +191,7 @@ button {
   right: 48px;
 }
 
+.sidebar-nav li .favorite-btn,
 .sidebar-nav li .destroy-btn {
   /* Some space needed to the right, so when the button size increases
    * upon hovering no horizontal scrollbar appears for the menu:
@@ -199,12 +205,14 @@ button {
   padding-right: calc(48px + 40px + 90px);
 }
 
+.sidebar-nav li .vicinity li:hover .favorite-btn,
 .sidebar-nav li div.view:hover .destroy-btn,
 .sidebar-nav li div.view:hover .explore-btn,
 .sidebar-nav li div.view:hover .edit-btn {
   display: block;
 }
 
+.sidebar-nav li .vicinity li .favorite-btn:hover,
 .sidebar-nav li .destroy-btn:hover,
 .sidebar-nav li .accordion-btn:hover,
 .sidebar-nav li .explore-btn:hover,
