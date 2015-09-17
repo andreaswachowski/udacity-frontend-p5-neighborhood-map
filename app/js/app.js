@@ -499,7 +499,7 @@ var ViewModel = function() {
                             },
                             function(error) {
                                 ErrorMsg.showError("Could not retrieve geolocation: " + error.code + ' ' + error.message +
-                                                   ", proceeding with default map center");
+                                    ", proceeding with default map center");
                                 self.initializeMap();
                             },
                             {
