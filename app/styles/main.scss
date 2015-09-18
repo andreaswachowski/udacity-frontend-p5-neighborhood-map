@@ -245,8 +245,8 @@ button {
 
 .sidebar-nav li div.view:hover label {
   /* Limit the label width so the buttons can be freely displayed */
-  /* 48px accordion-btn + 40px for width of explore-btn + 90px for right offset of explore-btn */
-  padding-right: calc(48px + 40px + 90px);
+  /* 40px for width of explore-btn + 90px for right offset of explore-btn */
+  padding-right: calc(40px + 90px);
 }
 
 .sidebar-nav li .vicinity li:hover .favorite-btn,
@@ -417,9 +417,9 @@ button {
   }
 
   /* On mobile, always (ie not only on hover) limit the label width so the buttons can be freely displayed */
-  /* 48px accordion-btn + 40px for width of explore-btn + 90px for right offset of explore-btn */
+  /* 40px for width of explore-btn + 90px for right offset of explore-btn */
   .sidebar-nav li div.view label {
-    padding-right: calc(48px + 40px + 90px);
+    padding-right: calc(40px + 90px);
   }
 }
 
