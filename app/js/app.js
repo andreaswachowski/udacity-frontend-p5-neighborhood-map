@@ -59,10 +59,16 @@ var model = {
 };
 
 // See http://twitter.github.io/typeahead.js/examples/
-var substringMatcher = function(objs, adapter) {
-    return function findMatches(q, cb) {
-        if (!adapter) {
-            adapter = function(i) { return i; };
+var substringMatcher = function(objs, toStringAdapter, outAdapter) {
+    return function findMatches(query, syncCallback) {
+
+        // Use the identity function when adapters are not provided
+        if (!toStringAdapter) {
+            toStringAdapter = function(i) { return i; };
+        }
+
+        if (!outAdapter) {
+            outAdapter = function(i) { return i; };
         }
 
         var matches, substringRegex;
@@ -70,19 +76,18 @@ var substringMatcher = function(objs, adapter) {
         // an array that will be populated with substring matches
         matches = [];
 
-        // regex used to determine if a string contains the substring `q`
-        substrRegex = new RegExp(q, 'i');
+        // regex used to determine if a string contains the substring `query`
+        substrRegex = new RegExp(query, 'i');
 
         // iterate through the pool of strings and for any string that
-        // contains the substring `q`, add it to the `matches` array
+        // contains the substring `query`, add it to the `matches` array
         $.each(objs, function(i, obj) {
-            var str = adapter(obj);
-            if (substrRegex.test(str)) {
-                matches.push(str);
+            if (substrRegex.test(toStringAdapter(obj))) {
+                matches.push(outAdapter(obj));
             }
         });
 
-        cb(matches);
+        syncCallback(matches);
     };
 };
 
@@ -144,6 +149,15 @@ Place.compareDistance = function(p1, p2) {
     // In fact, the Knockout documentation shows a similar example, see
     // http://knockoutjs.com/documentation/observableArrays.html
     return p1.location.distance > p2.location.distance ? 1 : -1;
+};
+
+/**
+ * Returns true when this place matches the given regex.
+ *
+ * Matching is limited to the title.
+ */
+Place.prototype.matchesRegex = function(regex) {
+    return regex.test(this.title());
 };
 
 /**
@@ -381,9 +395,10 @@ var ViewModel = function() {
     // It just had to be augmented to not just filter the list, but also
     // show/hide the markers on the map
     self.search = ko.computed( function() {
-        return ko.utils.arrayFilter(self.places(), function(place) {
-            var isMatch = place.title().toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
+        var regEx = new RegExp(self.query(), 'i');
 
+        return ko.utils.arrayFilter(self.places(), function(place) {
+            var isMatch = place.matchesRegex(regEx);
             var marker = self.lookupMarkerFromPlace(place);
 
             // The marker will not always be looked up successfully:
@@ -406,11 +421,11 @@ var ViewModel = function() {
     });
 
     self.uniqueMatch = function(searchFieldText) {
-        // TODO(refactor): The matching algorithm is coded twice, once in the substringMatcher, and once here. So if
-        // we want to change it, we have to do it in two places. Merge this.
+        // TODO(refactor): The matching algorithm is coded similarly in substringMatcher and self.search
+        // Avoid this redundancy.
         var substrRegex = new RegExp(searchFieldText, 'i');
-        var matchingPlaces = model.places.filter(function(e) {
-            return substrRegex.test(e.title());
+        var matchingPlaces = model.places.filter(function(place) {
+            return place.matchesRegex(substrRegex);
         });
         return matchingPlaces.length === 1 ? matchingPlaces[0] : false;
     };
@@ -870,7 +885,11 @@ var ViewModel = function() {
     }, {
         name: 'places',
         limit: 10,
-        source: substringMatcher(self.places(), function(place) {
+        source: substringMatcher(self.places(),
+            /* inAdapter */ function(place) {
+                return place.title();
+            },
+            /* outAdapter */ function(place) {
             return place.title();
             })
     });
