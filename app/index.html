@@ -44,12 +44,12 @@
         <ul id="accordion" role="tablist" aria-multiselectable="true" class="sidebar-nav" data-bind="foreach: search()">
           <li data-bind="css: { editing: editing }">
             <div class="center-container row-height li-btn-row">
-              <!-- ko if: venues().length > 0 -->
-              <button class="accordion-btn sidebar-li-accordion-btn-indent"
-                      data-parent="#accordion"
-                      data-toggle="collapse"
-                      data-bind="attr: { 'data-target': '#collapse' + id }"></button>
-              <!-- /ko -->
+              <div data-bind="if: venues().length > 0">
+                <button class="accordion-btn sidebar-li-accordion-btn-indent"
+                        data-parent="#accordion"
+                        data-toggle="collapse"
+                        data-bind="attr: { 'data-target': '#collapse' + id }"></button>
+              </div>
               <div class="description li-btn-row-shrink-3">
                   <label class="ellipsis indent-past-accordion" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
                   <div class="categories indent-past-accordion" data-bind="foreach: categories()">
