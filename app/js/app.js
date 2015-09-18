@@ -75,7 +75,8 @@ var substringMatcher = function(objs, adapter) {
 
         // iterate through the pool of strings and for any string that
         // contains the substring `q`, add it to the `matches` array
-        $.each(adapter(objs), function(i, str) {
+        $.each(objs, function(i, obj) {
+            var str = adapter(obj);
             if (substrRegex.test(str)) {
                 matches.push(str);
             }
@@ -869,11 +870,9 @@ var ViewModel = function() {
     }, {
         name: 'places',
         limit: 10,
-        source: substringMatcher(self.places, function(places) {
-            return places().map(function(p) {
-                return p.title();
+        source: substringMatcher(self.places(), function(place) {
+            return place.title();
             })
-        })
     });
 
     self.initialize();
