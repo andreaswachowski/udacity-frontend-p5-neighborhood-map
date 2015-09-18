@@ -58,15 +58,13 @@ var model = {
     places: [] // elements are of type Place, see below
 };
 
-var getPlaceTitles = function() {
-    return model.places.map(function(e) {
-        return e.title();
-    });
-};
-
 // See http://twitter.github.io/typeahead.js/examples/
-var substringMatcher = function() {
+var substringMatcher = function(objs, adapter) {
     return function findMatches(q, cb) {
+        if (!adapter) {
+            adapter = function(i) { return i; };
+        }
+
         var matches, substringRegex;
 
         // an array that will be populated with substring matches
@@ -77,7 +75,7 @@ var substringMatcher = function() {
 
         // iterate through the pool of strings and for any string that
         // contains the substring `q`, add it to the `matches` array
-        $.each(getPlaceTitles(), function(i, str) {
+        $.each(adapter(objs), function(i, str) {
             if (substrRegex.test(str)) {
                 matches.push(str);
             }
@@ -86,22 +84,6 @@ var substringMatcher = function() {
         cb(matches);
     };
 };
-
-$('.scrollable-dropdown-menu .typeahead').typeahead({
-    hint: true,
-    highlight: true,
-    minLength: 1,
-    // It would be nice to be able to map the typeahead class names to the bootstrap class names
-    // and be done with it. But typeahead uses <divs> instead of <li>s, and groups each dataset
-    // in an additional <div>, instead of using one single <ul>
-    // classNames : {
-    //     menu: 'dropdown-menu'
-    // }
-}, {
-    name: 'places',
-    limit: 10,
-    source: substringMatcher()
-});
 
 /**
  * @external "google.maps"
@@ -873,6 +855,26 @@ var ViewModel = function() {
         self.openInfowindow(gMarker);
         self.bounceMarker(gMarker);
     };
+
+    $('.scrollable-dropdown-menu .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1,
+        // It would be nice to be able to map the typeahead class names to the bootstrap class names
+        // and be done with it. But typeahead uses <divs> instead of <li>s, and groups each dataset
+        // in an additional <div>, instead of using one single <ul>
+        // classNames : {
+        //     menu: 'dropdown-menu'
+        // }
+    }, {
+        name: 'places',
+        limit: 10,
+        source: substringMatcher(self.places, function(places) {
+            return places().map(function(p) {
+                return p.title();
+            })
+        })
+    });
 
     self.initialize();
 };
