@@ -322,15 +322,15 @@ button {
   box-sizing: border-box;
 }
 
-.sidebar-nav li .view {
-  /* Define .view as containing block so that the buttons
+.li-btn-row {
+  /* Define .li-btn-row as containing block so that the buttons
    * stay vertically aligned in the title row, even when the
    * accordion is expanded.
    */
   position: relative;
 }
 
-.sidebar-nav li.editing .view {
+li.editing .li-btn-row {
   display: none;
 }
 

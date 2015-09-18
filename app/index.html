@@ -62,8 +62,8 @@
               <button class="explore-btn" data-bind="click: $root.explorePlace"></button>
               <button class="edit-btn" data-bind="click: $root.editPlace"></button>
               <button class="destroy-btn" data-bind="event: { click: $root.destroyPlace }"></button>
-              <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
             </div>
+            <input class="row-height edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.saveEditing, escapeKey: $root.cancelEditing, selectAndFocus: editing, event: { blur: $root.saveEditing }">
             <div data-bind="attr: {'id': 'collapse' + id }" class="collapse vicinity">
               <div data-bind="if: venues().length > 0">
                 <h4 class="nearby-heading">Nearby</h4>
