@@ -170,6 +170,18 @@ Place.prototype.matchesRegex = function(regex) {
 };
 
 /**
+ * Returns the URL for category icon of this place's primary category
+ * If that is not available, returns an empty string.
+ */
+Place.prototype.primaryCategoryIconURL = function() {
+    var primaryCategory = this.categories().filter( function(c) {
+        return c.primary === true;
+    })[0];
+
+    return primaryCategory ? primaryCategory.iconUrl : "";
+};
+
+/**
  * Augments the Place object with Foursquare venues.
  * @param {Array} venues - An array of Foursquare compact venues, as returned by the Foursquare venue search API
  * @see {@link https://developer.foursquare.com/docs/responses/venue}

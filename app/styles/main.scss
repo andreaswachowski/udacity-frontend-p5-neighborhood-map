@@ -34,6 +34,16 @@ button {
   vertical-align: baseline;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
+.category-icon {
+  background-color: #6bbae5;
+  height: 1em;
+  vertical-align: text-top;
+}
+
 .fill-screen {
   height: 100%;
   width: 100%;

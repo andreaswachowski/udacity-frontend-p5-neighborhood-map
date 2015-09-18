@@ -98,8 +98,15 @@
     <!-- Use "position: fixed" for the infowindow so that it hides behind the other elements. Otherwise, it would
       be appended below them, and a vertical scrollbar would appear at the map's right margin.  -->
     <div id="infowindow" class="fixed" data-bind="with: currentPlace">
-      <h3 data-bind="text: title"></h3>
-      <div data-bind="text: formatted_address().join(', ')"></div>
+      <h3>
+        <span data-bind="text: title"></span>
+        <div class="inline-block" data-bind="if: primaryCategoryIconURL()">
+          <img class="category-icon" data-bind="attr: { 'src': primaryCategoryIconURL() }"></img>
+        </div>
+      </h3>
+      <ol class="list-unstyled" data-bind="foreach: formatted_address()">
+        <li data-bind="text: $data"></li>
+      </ol>
     </div>
 
 <!-- build:js(.) js/vendor.js -->
