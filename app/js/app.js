@@ -152,12 +152,21 @@ Place.compareDistance = function(p1, p2) {
 };
 
 /**
+ * Returns a string containing the information against which a place is matched.
+ */
+Place.prototype.matchString = function() {
+    return this.title() + this.categories().map(function(c) {
+        return c.name;
+    }).join(',');
+};
+
+/**
  * Returns true when this place matches the given regex.
  *
  * Matching is limited to the title.
  */
 Place.prototype.matchesRegex = function(regex) {
-    return regex.test(this.title());
+    return regex.test(this.matchString());
 };
 
 /**
@@ -886,8 +895,8 @@ var ViewModel = function() {
         name: 'places',
         limit: 10,
         source: substringMatcher(self.places(),
-            /* inAdapter */ function(place) {
-                return place.title();
+            /* toStringAdapter */ function(place) {
+                return place.matchString();
             },
             /* outAdapter */ function(place) {
             return place.title();
