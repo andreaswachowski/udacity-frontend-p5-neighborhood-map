@@ -107,7 +107,12 @@ button {
 }
 
 .accordion-btn::after {
-  content: "▶";
+  /* Append the Unicode variation character FE0E to suppress the display of the triangle in the emoji font on iOS.
+   *
+   * See http://meta.stackexchange.com/questions/261074/prev-next-triangles-rendered-as-emojis-on-ios-devices
+   * and http://stackoverflow.com/questions/8335724/unicode-characters-being-drawn-differently-in-ios5
+   */
+  content: "▶\FE0E";
 }
 
 .favorite-btn::after {
