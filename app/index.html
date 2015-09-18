@@ -64,7 +64,8 @@
             <div data-bind="attr: {'id': 'collapse' + id }" class="collapse vicinity">
               <div data-bind="if: venues().length > 0">
                 <h4 class="nearby-heading">Nearby</h4>
-                <ul data-bind="foreach: venues()">
+                <!-- <ul data-bind="foreach: venues.sort(function (v1, v2) { return v1.location.distance > v2.location.distance ?  1 : -1 })"> -->
+                <ul data-bind="foreach: venues.sort(Place.compareDistance)">
                   <li class="row-height li-btn-row">
                     <div class="description li-btn-row-shrink-1">
                       <label class="title ellipsis indent-past-accordion">

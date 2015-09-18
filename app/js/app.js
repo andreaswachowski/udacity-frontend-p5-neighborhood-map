@@ -152,6 +152,17 @@ Place.getId = function() {
     return arguments.callee.count;
 };
 
+Place.compareDistance = function(p1, p2) {
+    // It is necessary to not just return a boolean, but actual numbers "1" and "-1".
+    //
+    // Otherwise, sorting would not work on mobile Safari/iOS (Chrome worked fine)
+    // See http://stackoverflow.com/questions/12718699/sorting-an-observable-array-in-knockout
+    //
+    // In fact, the Knockout documentation shows a similar example, see
+    // http://knockoutjs.com/documentation/observableArrays.html
+    return p1.location.distance > p2.location.distance ? 1 : -1;
+};
+
 /**
  * Augments the Place object with Foursquare venues.
  * @param {Array} venues - An array of Foursquare compact venues, as returned by the Foursquare venue search API
@@ -179,8 +190,6 @@ Place.prototype.addVenues = function(venues,viewModel) {
             contact: v.contact,
             categories: categories
         };
-    }).sort(function(v1,v2) {
-        return v1.location.distance > v2.location.distance;
     }));
 };
 
