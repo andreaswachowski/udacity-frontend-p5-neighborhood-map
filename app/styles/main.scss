@@ -243,16 +243,21 @@ button {
   right: 6px;
 }
 
-.sidebar-nav li div.view:hover label {
+.li-btn-row:hover .li-btn-row-shrink-3 {
   /* Limit the label width so the buttons can be freely displayed */
   /* 40px for width of explore-btn + 90px for right offset of explore-btn */
   padding-right: calc(40px + 90px);
 }
 
-.sidebar-nav li .vicinity li:hover .favorite-btn,
-.sidebar-nav li div.view:hover .destroy-btn,
-.sidebar-nav li div.view:hover .explore-btn,
-.sidebar-nav li div.view:hover .edit-btn {
+/* 40px for width of favorite-btn + 6px for right offset of favorite-btn */
+.li-btn-row:hover .li-btn-row-shrink-1 {
+  padding-right: calc(40px + 6px);
+}
+
+.li-btn-row:hover .favorite-btn,
+.place-title-row:hover .destroy-btn,
+.li-btn-row:hover .explore-btn,
+.li-btn-row:hover .edit-btn {
   display: block;
 }
 
@@ -418,8 +423,13 @@ button {
 
   /* On mobile, always (ie not only on hover) limit the label width so the buttons can be freely displayed */
   /* 40px for width of explore-btn + 90px for right offset of explore-btn */
-  .sidebar-nav li div.view label {
+  .li-btn-row .li-btn-row-shrink-3 {
     padding-right: calc(40px + 90px);
+  }
+
+  /* 40px for width of favorite-btn + 6px for right offset of favorite-btn */
+  .li-btn-row .li-btn-row-shrink-1 {
+    padding-right: calc(40px + 6px);
   }
 }
 
