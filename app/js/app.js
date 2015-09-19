@@ -814,13 +814,10 @@ var ViewModel = function() {
                 ErrorMsg.showError('Geocoder API call failed: ' + status);
                 place.title('unknown');
             }
+            self.places.push(place);
             self.storePlaces();
-            self.setInfowindowContent(place);
+            self.displayInfowindow(place);
         });
-
-        self.places.push(place);
-
-        self.displayInfowindow(place);
     };
 
     self.displayInfowindow = function(place) {
