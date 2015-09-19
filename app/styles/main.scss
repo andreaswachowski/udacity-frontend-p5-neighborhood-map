@@ -110,7 +110,11 @@ img[src*="foursquare"] {
 
 .categories {
   display: block;
-  font-size: 0.7em;
+  /* TODO(refactor) I started out with a responsive 0.7em, which was fine for the sidebar
+   * But the size in the infowindow was a little smaller, and I want it to be constant throughout both cases
+   * (but still responsive if the text-base size is changed) Can I use 'rem' instead?
+   */
+  font-size: 12px;
 }
 
 .indent-past-accordion {
@@ -156,6 +160,14 @@ img[src*="foursquare"] {
 
 .destroy-btn:after {
   content: "✖";
+}
+
+.infowindow-heading {
+  margin-bottom: 0;
+}
+
+.infowindow-address {
+  margin-top: 1em;
 }
 
 /* Sidebar Styles
