@@ -1,23 +1,33 @@
 # Neighborhood Map
-A project from Udacity's Front-end Web Developer Nano degree.
+A project from Udacity's Front-end Web Developer Nanodegree.
 
 It can be used to create a neighborhood map like the following:
 
 <img src="https://github.com/andreaswachowski/udacity-frontend-p5-neighborhood-map/blob/master/screenshot.png" height=auto width="100%">
 
-After centering/zooming the
-map to the desired area (it is initially set to an area in Hamburg, Germany),
-click on the map to create markers. The markers are collected in the drop-down
-list “places”. You can filter the places in the search field next to it.
+During load, if the device supports geolocation, the map center can be
+initialized to your location. Subsequent loads will retain that initial location (via localStorage).
 
-Places can also be modified: Edit the title of a location by
+Click on the map to create markers. Markers are reverse geocoded and the
+corresponding places collected in the sidebar.
+
+Explore the place by clicking on the magnifier glass, which is shown while
+hovering over its entry in the sidebar (on mobile devices, the button is always
+shown). Exploring will extend the place with five venues from the vicinity
+found by Foursquare. You can promote such a venue to a proper place by clicking
+on its star icon.
+
+Place titles can also be modified: Edit the title of a location by
 double-clicking on the corresponding list entry (or clicking its edit
 button).
 
 A single click pans to the selected marker.
 
+Places are persisted to localStorage for future use.
+
 # Installation
 * Clone the git repository to a local directory
+* Enter your Foursquare API credentials in `app/js/app.js` (right at the top, you will see where in the file)
 * Call [grunt](http://gruntjs.com/getting-started) (assumes grunt-cli is already installed):
   1. Change to the project's root directory
   2. Run
