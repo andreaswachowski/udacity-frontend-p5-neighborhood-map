@@ -470,12 +470,26 @@ var ViewModel = function() {
     };
 
     self.createMarker = function(map,place) {
-        var gMarker = new google.maps.Marker({
-            id: place.id, // the ids must be equal so that self.places and self.mapMarkers can be synced
-            position: place.position,
-            animation: google.maps.Animation.DROP,
-            map: map
-        });
+        var gMarker;
+        var iconUrl = place.primaryCategoryIconURL();
+
+        if (iconUrl) {
+            gMarker = new google.maps.Marker({
+                id: place.id, // the ids must be equal so that self.places and self.mapMarkers can be synced
+                position: place.position,
+                optimized: false, // Create marker as separate DOM element so it can be styled
+                animation: google.maps.Animation.DROP,
+                icon: iconUrl,
+                map: map
+            });
+        } else {
+            gMarker = new google.maps.Marker({
+                id: place.id, // the ids must be equal so that self.places and self.mapMarkers can be synced
+                position: place.position,
+                animation: google.maps.Animation.DROP,
+                map: map
+            });
+        }
 
         google.maps.event.addListener(gMarker,'click',function() {
             map.panTo(gMarker.getPosition());
