@@ -382,7 +382,7 @@ var ViewModel = function() {
     self.currentPlace = ko.observable();
 
     // if API credentials available, Foursquare will be initialized in self.initialize
-    self.foursquare;
+    self.foursquare = undefined;
 
     // To cleanly separate the model (ie places with lat/lng, an address, a title etc.)
     // from the view (esp. Google markers), the markers are tracked in a separate array,
