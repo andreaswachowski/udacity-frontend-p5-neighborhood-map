@@ -16,8 +16,16 @@
     <!-- The geolocation div will be removed in initializeMap(), before launching the actual app -->
     <div class="container-fluid hidden" id="geolocation-dialogue">
       <h1>Choose the map center</h1>
-      <button id="current-location-btn" class="btn btn-default" type="submit">My current location</button>
-      <button id="default-location-btn" class="btn btn-default" type="submit">Default location (Stanford University)</button>
+      <div id="geolocation-buttons">
+        <button id="current-location-btn" class="btn btn-default with-margin" type="submit">My current location</button>
+        <div data-bind="if: loadMapCenter()">
+          <button id="previous-location-btn" class="btn btn-default with-margin" type="submit">Previously stored location</button>
+        </div>
+        <button id="default-location-btn" class="btn btn-default with-margin" type="submit">Default location (Stanford University)</button>
+      </div>
+      <label class="geolocation-default-label with-margin"><input id="map-center-default" type="checkbox"><div>Save and use location as default for future invocations<br><small>(To reset, remove key <code>nhm.useStoredMapCenter</code> from localStorage)</small></div></label>
+      
+      
     </div>
     <nav class="navbar navbar-default hidden">
       <div class="container-fluid">

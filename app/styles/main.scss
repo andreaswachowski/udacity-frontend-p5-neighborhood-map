@@ -50,6 +50,17 @@ img[src*="foursquare"] {
   vertical-align: text-top;
 }
 
+.with-margin {
+  margin: 0.5em;
+}
+
+.geolocation-default-label > div {
+  vertical-align: top;
+  font-weight: normal;
+  display: inline-block;
+  padding: 0.2em;
+}
+
 .fill-screen {
   height: 100%;
   width: 100%;

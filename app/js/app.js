@@ -15,6 +15,11 @@ var FOURSQUARE_CLIENT_ID; /* Initialize this! */
 var FOURSQUARE_CLIENT_SECRET; /* Initialize this! */
 
 /**
+ * Prefix for localStorage entities
+ */
+var storePrefix = 'nhm.'; // nhm = NeighborHood Map
+
+/**
  * Loads the google map code and bootstraps the application.
  * Called at window.onload, see end of file.
  */
@@ -507,31 +512,41 @@ var ViewModel = function() {
         marker.setMap(null); // remove marker from Google Map
     };
 
-    self.retrieveMapCenter = function() {
-        var mapCenter;
+    /**
+     * Returns a map center previously stored in local storage, otherwise "".
+     */
+    self.loadMapCenter = function() {
+        var mapCenterDefault, mapCenter;
         if (store.enabled) {
-            mapCenter = store.get('mapCenter');
+            mapCenter = store.get(storePrefix+'mapCenter');
         }
         return mapCenter;
     };
 
     self.saveMapCenter = function() {
         if (store.enabled) {
-            store.set('mapCenter',model.map.center);
+            store.set(storePrefix+'mapCenter',model.map.center);
         }
     };
 
     self.initialize = function() {
-        var mapCenter = self.retrieveMapCenter();
+        var mapCenter;
+        if (store.enabled) {
+            var useDefault = store.get(storePrefix+'useStoredMapCenter');
+            if (useDefault === true) {
+                mapCenter = store.get(storePrefix+'mapCenter');
+            }
+        }
+
         if (!mapCenter) {
             if (navigator.geolocation) {
                 $('#geolocation-dialogue').removeClass('hidden');
-                $('#geolocation-dialogue').click(function(ev) {
-                    var permission = ev.target.id === "current-location-btn";
+                $('#geolocation-buttons').click(function(ev) {
+                    store.set(storePrefix+'useStoredMapCenter', $('#map-center-default:checked').length > 0);
 
                     // In either case, save the map center for future sessions so it need not be chosen
                     // every time
-                    if (permission) {
+                    if (ev.target.id === "current-location-btn") {
                         navigator.geolocation.getCurrentPosition(
                             function(position) {
                                 model.map.center.lat = position.coords.latitude;
@@ -549,7 +564,11 @@ var ViewModel = function() {
                                 timeout: 30*1000, /* msec = 30 seconds */
                                 maximumAge: 10*60*1000 /* msec = 10 minutes */
                             });
-                    } else {
+                    } else if (ev.target.id === "previous-location-btn") {
+                        model.map.center = self.loadMapCenter();
+                        self.saveMapCenter(model.map.center);
+                        self.initializeMap();
+                    } else { // "default location"
                         self.saveMapCenter(model.map.center);
                         self.initializeMap();
                     }
@@ -851,7 +870,7 @@ var ViewModel = function() {
 
     self.loadPlaces = function() {
         if (store.enabled) {
-            var placeStorage = store.get('places');
+            var placeStorage = store.get(storePrefix+'places');
             if (placeStorage) {
                 var placeArray = JSON.parse(placeStorage);
                 placeArray.forEach(function (p) {
@@ -871,7 +890,7 @@ var ViewModel = function() {
     self.storePlaces = function() {
         if (store.enabled) {
             // http://knockoutjs.com/documentation/json-data.html
-            store.set('places',ko.toJSON(self.places));
+            store.set(storePrefix+'places',ko.toJSON(self.places));
         }
     };
 
