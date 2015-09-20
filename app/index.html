@@ -61,8 +61,8 @@
                         data-toggle="collapse"
                         data-bind="attr: { 'data-target': '#collapse' + id }"></button>
               </div>
-              <div class="description li-btn-row-shrink-3">
-                  <label class="ellipsis indent-past-accordion" data-bind="text: title, event: { click: $root.showPlace, dblclick: $root.editPlace }"></label>
+              <div class="description li-btn-row-shrink-3" data-bind="event: { click: $root.showPlace, dblclick: $root.editPlace }">
+                  <label class="ellipsis indent-past-accordion" data-bind="text: title"></label>
                   <div class="categories indent-past-accordion" data-bind="foreach: categories()">
                     <span data-bind="text: name"></span>
                   </div>
