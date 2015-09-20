@@ -824,21 +824,15 @@ var ViewModel = function() {
                         return el.trim();
                     }));
 
-                    // TODO(refactor): The Geocoder provides a "types" array which would allow to dynamically
-                    // map to the address_components indices, for increased robustness
-                    place.address = {
-                        street: {
-                            number: results[0].address_components[0].long_name,
-                            name:  results[0].address_components[1].long_name
-                        },
-                        sublocality: results[0].address_components[2].long_name,
-                        city:  results[0].address_components[3].long_name, /* Geocoder type: locality */
-                        administrative_area: results[0].address_components[4].long_name,
-                        country: results[0].address_components[5].long_name,
-                        postalCode: results[0].address_components[6].long_name
-                    };
-                    // TODO(feat): Locale-specific formatting of street name and street number
-                    place.title(place.address.street.name + ' ' + place.address.street.number);
+                    // We don't use them yet, but store the address components as well
+                    place.address = {};
+                    results[0].address_components.forEach(function(c) {
+                        // Each component has a type, e.g. "route", "sublocality", "country"
+                        // Actually, a component may have several types, e.g. "country" and "political".
+                        // The first type ("country") is the significant one for us.
+                        place.address[c.types[0]] = c.long_name;
+                    });
+                    place.title(place.formatted_address()[0] || 'unknown (empty formatted_address from Geocoder)');
                 } else {
                     ErrorMsg.showError('unknown address (GeoCoder lookup did not return a result)');
                     place.title('unknown');
