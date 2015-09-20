@@ -37,7 +37,8 @@ Places are persisted to localStorage for future use.
 * Call [grunt](http://gruntjs.com/getting-started) (assumes grunt-cli is already installed):
   1. Change to the project's root directory
   2. Run `npm install`
-  3. Run Grunt with `grunt`
+  3. Run `bower install`
+  4. Run Grunt with `grunt`
 
 Afterwards, all relevant files can be found in the `dist` directory
 (below the project's root directory), open `dist/index.html` to start.

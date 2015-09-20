@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/andreaswachowski/udacity-frontend-p5-neighborhood-map#readme",
   "devDependencies": {
+    "bower": "^1.5.2",
     "grunt": "^0.4.5",
     "grunt-browser-sync": "^2.1.3",
     "grunt-contrib-clean": "^0.6.0",
