@@ -128,6 +128,9 @@ var Place = function(position) {
         lng: position && position.lng()
     };
     // TODO(refactor): Use consistent naming convention, here: camelCase
+    this.facebook = ko.observable();
+    this.twitter = ko.observable();
+    this.formattedPhone = ko.observable();
     this.formatted_address = ko.observableArray();
     this.categories = ko.observableArray();
     //this.address = '';
@@ -754,6 +757,9 @@ var ViewModel = function() {
             lat: venue.location.lat,
             lng: venue.location.lng
         };
+        place.facebook(venue.contact.facebook);
+        place.twitter(venue.contact.twitter);
+        place.formattedPhone(venue.contact.formattedPhone);
         place.formatted_address(venue.location.formattedAddress);
 
         // TODO(feat): Extract street number and street name.
@@ -768,7 +774,6 @@ var ViewModel = function() {
 
         self.places.push(place);
         self.showPlace(place);
-        console.log(venue);
     };
 
     self.editPlace = function (place) {
@@ -871,6 +876,9 @@ var ViewModel = function() {
                     var place = new Place();
                     place.title(p.title);
                     place.position = p.position;
+                    place.facebook(p.facebook);
+                    place.twitter(p.twitter);
+                    place.formattedPhone(p.formattedPhone);
                     place.formatted_address(p.formatted_address);
                     place.categories(p.categories);
                     place.address = p.address;

@@ -113,6 +113,17 @@
       <ol class="infowindow-address list-unstyled" data-bind="foreach: formatted_address()">
         <li data-bind="text: $data"></li>
       </ol>
+      <div class="contact">
+        <div data-bind="if: formattedPhone()">
+          <p>Phone: <span data-bind="text: formattedPhone()"></span></p>
+        </div>
+        <div data-bind="if: twitter()">
+          <p><a data-bind="text: '@' + twitter(), attr: { 'href': 'https://twitter.com/' + twitter() }"></a></p>
+        </div>
+        <div data-bind="if: facebook()">
+          <p><a data-bind="attr: { href: 'https://facebook.com/' + facebook() }">Facebook</a></p>
+        </div>
+      </div>
     </div>
 
 <!-- build:js(.) js/vendor.js -->
