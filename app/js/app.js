@@ -918,9 +918,19 @@ var ViewModel = function() {
         self.infoWindow.close();
     };
 
+    self.closeSidebarOnMobile = function() {
+        // TODO(refactor): This breakpoint at 400 is a bit singular.
+        // However, the sidebar has a width of 300px, so it covers essentially the whole display
+        // and needs to disappear when the user selects a place.
+        if (jQuery(window).width() < 400) {
+            $('#wrapper').removeClass('toggled');
+        }
+    };
+
     self.showPlace = function(place) {
         var gMarker = self.lookupMarkerFromPlace(place);
         gMarker.getMap().panTo(gMarker.getPosition());
+        self.closeSidebarOnMobile();
         self.openInfowindow(gMarker);
         self.bounceMarker(gMarker);
     };
