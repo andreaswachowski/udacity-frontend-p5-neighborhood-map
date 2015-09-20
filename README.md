@@ -56,5 +56,5 @@ of `app/js/app.js`.
 # Resources
 * [Google Maps APIs](https://developers.google.com/maps/)
 * [Bootstrap](http://getbootstrap.com/)
-* [typeahead.js/](https://twitter.github.io/typeahead.js/)
+* [typeahead.js](https://twitter.github.io/typeahead.js/)
 * [todomvc](https://github.com/tastejs/todomvc/tree/gh-pages)
